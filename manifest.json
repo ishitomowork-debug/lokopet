@@ -1,0 +1,17 @@
+{
+  "name": "ロケペット",
+  "short_name": "ロケペット",
+  "description": "位置情報をもとに提案してくれるAIペットを育てよう！",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#e8eaf6",
+  "theme_color": "#7c4dff",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

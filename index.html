@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>ロケペット - 位置情報AIペット</title>
+  <meta name="description" content="あなたの位置情報をもとに提案してくれるAIペット。育てて、一緒にお出かけしよう！" />
+  <meta name="theme-color" content="#7c4dff" />
+  <link rel="manifest" href="manifest.json" />
+  <meta property="og:title" content="ロケペット - 位置情報AIペット" />
+  <meta property="og:description" content="位置情報をもとに提案してくれるAIペットを育てよう！" />
+  <meta property="og:type" content="website" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>" />
+  <style>
+    :root {
+      --primary: #7c4dff;
+      --primary-light: #b388ff;
+      --accent: #e040fb;
+      --bg-start: #e8eaf6;
+      --bg-end: #fce4ec;
+      --card: rgba(255,255,255,0.85);
+      --card-solid: #fff;
+      --text: #333;
+      --text-sub: #888;
+      --radius: 20px;
+      --shadow: 0 4px 24px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 40px rgba(0,0,0,0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic Pro', 'Segoe UI', sans-serif;
+      background: linear-gradient(160deg, var(--bg-start) 0%, var(--bg-end) 100%);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ===== Header ===== */
+    .header {
+      width: 100%;
+      padding: 16px 20px 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 420px;
+    }
+    .header h1 { font-size: 1.2rem; color: var(--text); font-weight: 700; }
+    .header-icons { display: flex; gap: 8px; }
+    .icon-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: none; background: var(--card); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; box-shadow: var(--shadow);
+      transition: transform 0.15s;
+    }
+    .icon-btn:active { transform: scale(0.9); }
+
+    /* ===== Pet Stage ===== */
+    .pet-stage {
+      width: 100%; max-width: 420px;
+      padding: 0 20px;
+      display: flex; flex-direction: column; align-items: center;
+      position: relative;
+    }
+
+    /* Status bars */
+    .pet-stats {
+      display: flex; gap: 12px; width: 100%;
+      margin-bottom: 12px; justify-content: center;
+    }
+    .stat {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 0.75rem; color: var(--text-sub);
+      background: var(--card); padding: 4px 10px;
+      border-radius: 50px; box-shadow: var(--shadow);
+    }
+    .stat-bar {
+      width: 48px; height: 6px; background: #eee;
+      border-radius: 3px; overflow: hidden;
+    }
+    .stat-fill {
+      height: 100%; border-radius: 3px;
+      transition: width 0.5s ease;
+    }
+    .stat-fill.mood    { background: linear-gradient(90deg, #ff9800, #ffc107); }
+    .stat-fill.exp     { background: linear-gradient(90deg, #7c4dff, #e040fb); }
+    .stat-fill.explore { background: linear-gradient(90deg, #00bcd4, #4caf50); }
+
+    .pet-level {
+      font-size: 0.7rem; background: var(--primary);
+      color: white; padding: 2px 10px; border-radius: 50px;
+      font-weight: 700; box-shadow: var(--shadow);
+    }
+
+    /* Pet emoji */
+    .pet-area {
+      position: relative; width: 160px; height: 160px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 8px 0 4px;
+    }
+
+    .pet-emoji {
+      font-size: 100px;
+      animation: pet-idle 3s ease-in-out infinite;
+      cursor: pointer; user-select: none;
+      filter: drop-shadow(0 12px 24px rgba(0,0,0,0.15));
+      transition: transform 0.15s;
+      position: relative; z-index: 2;
+    }
+    .pet-emoji:active { transform: scale(0.88); }
+
+    .pet-shadow {
+      position: absolute; bottom: 8px;
+      width: 80px; height: 16px;
+      background: radial-gradient(ellipse, rgba(0,0,0,0.15), transparent);
+      border-radius: 50%; z-index: 1;
+      animation: shadow-pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes pet-idle {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      25% { transform: translateY(-10px) rotate(-2deg); }
+      75% { transform: translateY(-6px) rotate(2deg); }
+    }
+    @keyframes shadow-pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      25% { transform: scale(0.85); opacity: 0.7; }
+    }
+
+    .pet-emoji.thinking {
+      animation: think-bounce 0.6s ease-in-out infinite;
+    }
+    @keyframes think-bounce {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      25% { transform: scale(1.05) rotate(-5deg); }
+      75% { transform: scale(0.95) rotate(5deg); }
+    }
+
+    .pet-emoji.happy {
+      animation: happy-jump 0.5s ease-in-out 3;
+    }
+    @keyframes happy-jump {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-20px) scale(1.1); }
+    }
+
+    /* Hearts on tap */
+    .heart-particle {
+      position: absolute; font-size: 20px; pointer-events: none;
+      animation: heart-rise 1s ease-out forwards; z-index: 10;
+    }
+    @keyframes heart-rise {
+      0% { opacity: 1; transform: translateY(0) scale(0.5); }
+      100% { opacity: 0; transform: translateY(-80px) scale(1.2); }
+    }
+
+    /* ===== Bubble ===== */
+    .bubble-wrap { width: 100%; max-width: 420px; padding: 0 20px; }
+
+    .bubble {
+      background: var(--card-solid);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      width: 100%;
+      box-shadow: var(--shadow);
+      font-size: 0.92rem;
+      line-height: 1.75;
+      color: var(--text);
+      min-height: 56px;
+      position: relative;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.6);
+    }
+    .bubble::before {
+      content: '';
+      position: absolute; top: -10px; left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-bottom-color: var(--card-solid);
+    }
+
+    .bubble-actions {
+      display: flex; justify-content: flex-end;
+      gap: 6px; margin-top: 10px;
+      border-top: 1px solid #f0f0f0;
+      padding-top: 8px;
+    }
+    .bubble-actions.hidden { display: none; }
+
+    .bubble-action {
+      font-size: 0.72rem; padding: 4px 10px;
+      border-radius: 50px; border: 1px solid #ddd;
+      background: white; cursor: pointer;
+      transition: all 0.15s; font-family: inherit;
+    }
+    .bubble-action:hover { background: var(--primary); color: white; border-color: var(--primary); }
+
+    /* ===== Controls ===== */
+    .controls {
+      width: 100%; max-width: 420px;
+      padding: 16px 20px 8px;
+    }
+
+    .chips {
+      display: flex; gap: 6px; flex-wrap: wrap;
+      justify-content: center; margin-bottom: 14px;
+    }
+    .chip {
+      padding: 6px 14px; border-radius: 50px;
+      font-size: 0.8rem; cursor: pointer;
+      border: 1.5px solid #ddd; background: var(--card);
+      transition: all 0.15s; font-family: inherit;
+      box-shadow: var(--shadow);
+    }
+    .chip.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+    .main-btn {
+      width: 100%; padding: 14px;
+      border: none; border-radius: 16px;
+      font-size: 1rem; font-weight: 700;
+      cursor: pointer; font-family: inherit;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white; box-shadow: 0 4px 16px rgba(124,77,255,0.35);
+      transition: transform 0.15s, box-shadow 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .main-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(124,77,255,0.4); }
+    .main-btn:active { transform: translateY(0); }
+    .main-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .sub-btns {
+      display: flex; gap: 8px; margin-top: 10px;
+    }
+    .sub-btn {
+      flex: 1; padding: 10px;
+      border: 1.5px solid #e0e0e0; border-radius: 12px;
+      font-size: 0.82rem; cursor: pointer;
+      background: var(--card); font-family: inherit;
+      transition: all 0.15s; box-shadow: var(--shadow);
+      text-align: center;
+    }
+    .sub-btn:active { transform: scale(0.96); }
+
+    /* ===== Location badge ===== */
+    .location-badge {
+      margin-top: 12px; padding: 8px 14px;
+      background: var(--card); border-radius: 12px;
+      font-size: 0.78rem; color: var(--text-sub);
+      text-align: center; box-shadow: var(--shadow);
+      width: 100%;
+      display: none;
+    }
+    .location-badge.visible { display: block; }
+
+    /* ===== History panel ===== */
+    .history-panel {
+      position: fixed; top: 0; right: -100%;
+      width: min(85vw, 360px); height: 100dvh;
+      background: var(--card-solid);
+      box-shadow: -4px 0 32px rgba(0,0,0,0.15);
+      transition: right 0.3s ease;
+      z-index: 100; padding: 20px;
+      overflow-y: auto;
+    }
+    .history-panel.open { right: 0; }
+    .history-overlay {
+      position: fixed; top: 0; left: 0;
+      width: 100vw; height: 100dvh;
+      background: rgba(0,0,0,0.3);
+      z-index: 99; display: none;
+    }
+    .history-overlay.open { display: block; }
+
+    .history-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 16px;
+    }
+    .history-header h2 { font-size: 1rem; }
+    .history-close { font-size: 1.5rem; cursor: pointer; background: none; border: none; }
+
+    .history-item {
+      padding: 12px; border-radius: 12px;
+      background: #f8f8ff; margin-bottom: 10px;
+      font-size: 0.82rem; line-height: 1.6;
+      border-left: 3px solid var(--primary);
+    }
+    .history-item .hi-meta {
+      font-size: 0.7rem; color: var(--text-sub);
+      margin-bottom: 4px;
+    }
+    .history-empty {
+      text-align: center; color: var(--text-sub);
+      font-size: 0.85rem; padding: 40px 0;
+    }
+
+    /* ===== Setup ===== */
+    .setup-screen {
+      min-height: 100dvh; display: flex;
+      flex-direction: column; align-items: center;
+      justify-content: center; padding: 24px;
+      width: 100%;
+    }
+    .setup-card {
+      background: var(--card-solid);
+      border-radius: var(--radius); padding: 32px 24px;
+      max-width: 360px; width: 100%;
+      box-shadow: var(--shadow-lg);
+      text-align: center;
+    }
+    .setup-card h2 { font-size: 1.1rem; margin-bottom: 8px; color: var(--text); }
+    .setup-card p  { font-size: 0.82rem; color: var(--text-sub); margin-bottom: 16px; line-height: 1.6; }
+
+    .setup-pet-select {
+      display: flex; gap: 6px; flex-wrap: wrap;
+      justify-content: center; margin: 16px 0;
+    }
+    .setup-pet-option {
+      font-size: 36px; cursor: pointer; padding: 6px;
+      border-radius: 12px; border: 2px solid transparent;
+      transition: all 0.15s; background: none;
+    }
+    .setup-pet-option.selected {
+      border-color: var(--primary);
+      background: #ede7f6;
+    }
+
+    .setup-input {
+      width: 100%; padding: 12px 14px;
+      border: 2px solid #eee; border-radius: 12px;
+      font-size: 0.9rem; margin-bottom: 8px;
+      outline: none; transition: border-color 0.2s;
+      font-family: inherit;
+    }
+    .setup-input:focus { border-color: var(--primary); }
+
+    .setup-name-input {
+      width: 100%; padding: 12px 14px;
+      border: 2px solid #eee; border-radius: 12px;
+      font-size: 0.9rem; margin-bottom: 12px;
+      outline: none; transition: border-color 0.2s;
+      font-family: inherit; text-align: center;
+    }
+    .setup-name-input:focus { border-color: var(--primary); }
+
+    .setup-step { display: none; }
+    .setup-step.active { display: block; }
+
+    .setup-dots {
+      display: flex; gap: 6px; justify-content: center; margin: 16px 0;
+    }
+    .setup-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #ddd; transition: background 0.2s;
+    }
+    .setup-dot.active { background: var(--primary); }
+
+    .hidden { display: none !important; }
+
+    /* ===== Footer ===== */
+    .footer {
+      width: 100%; max-width: 420px;
+      text-align: center; padding: 16px;
+      font-size: 0.7rem; color: #ccc;
+    }
+    .footer a { color: #bbb; }
+  </style>
+</head>
+<body>
+
+<!-- ===== Onboarding Setup ===== -->
+<div class="setup-screen" id="setup">
+  <div class="setup-card">
+    <!-- Step 1: Choose Pet -->
+    <div class="setup-step active" id="step1">
+      <div style="font-size:60px;margin-bottom:8px">🐾</div>
+      <h2>ロケペットへようこそ！</h2>
+      <p>位置情報をもとに提案してくれる<br>あなただけのAIペットを育てよう</p>
+      <p style="font-weight:600;color:var(--text);margin-bottom:4px">ペットを選んでね</p>
+      <div class="setup-pet-select" id="petSelect"></div>
+      <button class="main-btn" onclick="setupNext(2)">次へ ➜</button>
+    </div>
+    <!-- Step 2: Name Pet -->
+    <div class="setup-step" id="step2">
+      <div style="font-size:60px;margin-bottom:8px" id="step2Pet">🐱</div>
+      <h2>名前をつけてあげて！</h2>
+      <input class="setup-name-input" id="petNameInput" placeholder="例: モフ太郎" maxlength="10" />
+      <button class="main-btn" onclick="setupNext(3)">次へ ➜</button>
+    </div>
+    <!-- Step 3: API Key -->
+    <div class="setup-step" id="step3">
+      <div style="font-size:48px;margin-bottom:8px">🔑</div>
+      <h2>AIの頭脳をセットアップ</h2>
+      <p>
+        <strong>Groq API</strong>キーを入力（無料）<br>
+        👉 <a href="https://console.groq.com/keys" target="_blank" style="color:var(--primary)">console.groq.com</a> で取得
+      </p>
+      <input class="setup-input" type="password" id="apiKeyInput" placeholder="gsk_..." />
+      <button class="main-btn" onclick="completeSetup()">🚀 はじめる！</button>
+    </div>
+    <div class="setup-dots">
+      <div class="setup-dot active" id="dot1"></div>
+      <div class="setup-dot" id="dot2"></div>
+      <div class="setup-dot" id="dot3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Main App ===== -->
+<div id="app" class="hidden">
+
+  <div class="header">
+    <h1>🐾 <span id="petNameDisplay">ロケペット</span></h1>
+    <div class="header-icons">
+      <button class="icon-btn" onclick="toggleHistory()" title="履歴">📜</button>
+      <button class="icon-btn" onclick="resetApp()" title="設定">⚙️</button>
+    </div>
+  </div>
+
+  <div class="pet-stage">
+    <!-- Stats -->
+    <div class="pet-stats">
+      <div class="stat">
+        <span>😊</span>
+        <div class="stat-bar"><div class="stat-fill mood" id="moodBar" style="width:80%"></div></div>
+      </div>
+      <div class="pet-level" id="levelBadge">Lv.1</div>
+      <div class="stat">
+        <span>✨</span>
+        <div class="stat-bar"><div class="stat-fill exp" id="expBar" style="width:0%"></div></div>
+      </div>
+      <div class="stat">
+        <span>🗺️</span>
+        <div class="stat-bar"><div class="stat-fill explore" id="exploreBar" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <!-- Pet -->
+    <div class="pet-area" id="petArea">
+      <span class="pet-emoji" id="petEmoji" onclick="tapPet(event)">🐱</span>
+      <div class="pet-shadow"></div>
+    </div>
+  </div>
+
+  <div class="bubble-wrap">
+    <div class="bubble" id="bubble">
+      はじめまして！どこにいるか教えてにゃ 🐾
+    </div>
+    <div class="bubble-actions hidden" id="bubbleActions">
+      <button class="bubble-action" onclick="shareResult()">📤 シェア</button>
+      <button class="bubble-action" onclick="getLocationAndAsk()">🔄 もう一回</button>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="chips" id="chips">
+      <button class="chip active" data-mode="general">🎯 なんでも</button>
+      <button class="chip" data-mode="food">🍜 ごはん</button>
+      <button class="chip" data-mode="spot">📍 スポット</button>
+      <button class="chip" data-mode="weather">🌤 天気</button>
+      <button class="chip" data-mode="chat">💬 雑談</button>
+    </div>
+
+    <button class="main-btn" id="mainBtn" onclick="getLocationAndAsk()">
+      <span>📍</span> いまここで提案して！
+    </button>
+
+    <div class="sub-btns">
+      <button class="sub-btn" onclick="changePetEmoji()">🎲 見た目変更</button>
+      <button class="sub-btn" onclick="freeChat()">💬 自由に話す</button>
+    </div>
+
+    <div class="location-badge" id="locationBadge">
+      📍 位置情報を取得してね
+    </div>
+  </div>
+
+  <div class="footer">
+    Powered by Groq + Llama 3.3 | <a href="#" onclick="resetApp()">リセット</a>
+  </div>
+</div>
+
+<!-- ===== History Panel ===== -->
+<div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+<div class="history-panel" id="historyPanel">
+  <div class="history-header">
+    <h2>📜 おでかけ履歴</h2>
+    <button class="history-close" onclick="toggleHistory()">✕</button>
+  </div>
+  <div id="historyList">
+    <div class="history-empty">まだ履歴がないよ<br>📍「いまここ」を押してみて！</div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// State
+// ============================================================
+const PET_TYPES = [
+  { emoji: '🐱', personality: 'ツンデレ猫', suffix: 'にゃ', traits: '気まぐれだけど本当は甘えん坊' },
+  { emoji: '🐶', personality: '元気犬', suffix: 'わん', traits: 'いつも元気でポジティブ' },
+  { emoji: '🐰', personality: 'おっとりうさぎ', suffix: 'ぴょん', traits: 'のんびり屋だけど食べ物に詳しい' },
+  { emoji: '🐻', personality: 'ぐうたら熊', suffix: 'くま', traits: '食いしん坊で昼寝好き' },
+  { emoji: '🦊', personality: '知恵狐', suffix: 'コン', traits: '物知りで歴史に詳しい' },
+  { emoji: '🐸', personality: '冒険蛙', suffix: 'ケロ', traits: '散歩とアウトドアが大好き' },
+  { emoji: '🐼', personality: 'まったりパンダ', suffix: 'だっ', traits: 'マイペースでカフェ巡りが好き' },
+  { emoji: '🐨', personality: '癒しコアラ', suffix: 'ラ〜', traits: '人の疲れを癒すのが得意' },
+  { emoji: '🦁', personality: '王様ライオン', suffix: 'ガオ', traits: '堂々としていてグルメに厳しい' },
+  { emoji: '🐯', personality: 'やんちゃ虎', suffix: 'ガル', traits: '活発でスポーツ施設に詳しい' },
+];
+
+let state = loadState();
+
+function defaultState() {
+  return {
+    petTypeIdx: 0,
+    petName: '',
+    apiKey: '',
+    level: 1,
+    exp: 0,
+    mood: 80,
+    totalExplore: 0,
+    history: [],
+    setupDone: false,
+  };
+}
+
+function loadState() {
+  try {
+    const s = JSON.parse(localStorage.getItem('lokopet_state'));
+    return s && s.setupDone ? s : defaultState();
+  } catch { return defaultState(); }
+}
+
+function saveState() {
+  localStorage.setItem('lokopet_state', JSON.stringify(state));
+}
+
+let currentMode = 'general';
+let userLocation = null;
+let lastReply = '';
+
+// ============================================================
+// Setup / Onboarding
+// ============================================================
+window.onload = () => {
+  // 旧データ移行
+  localStorage.removeItem('gemini_api_key');
+  const oldKey = localStorage.getItem('groq_api_key');
+  if (oldKey && !state.setupDone) {
+    state.apiKey = oldKey;
+    localStorage.removeItem('groq_api_key');
+  }
+
+  if (state.setupDone) {
+    showApp();
+  } else {
+    renderPetSelect();
+  }
+
+  // Chips
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      currentMode = chip.dataset.mode;
+    });
+  });
+
+  // Mood decay every 30 min of real time
+  setInterval(() => {
+    if (state.mood > 20) { state.mood -= 1; saveState(); updateStats(); }
+  }, 30 * 60 * 1000);
+};
+
+function renderPetSelect() {
+  const el = document.getElementById('petSelect');
+  el.innerHTML = PET_TYPES.map((p, i) =>
+    `<button class="setup-pet-option${i===state.petTypeIdx?' selected':''}"
+            onclick="selectPetType(${i})">${p.emoji}</button>`
+  ).join('');
+}
+
+function selectPetType(i) {
+  state.petTypeIdx = i;
+  document.querySelectorAll('.setup-pet-option').forEach((el,j) => {
+    el.classList.toggle('selected', j===i);
+  });
+}
+
+function setupNext(step) {
+  document.querySelectorAll('.setup-step').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.setup-dot').forEach(d => d.classList.remove('active'));
+
+  if (step === 2) {
+    document.getElementById('step2').classList.add('active');
+    document.getElementById('step2Pet').textContent = PET_TYPES[state.petTypeIdx].emoji;
+    document.getElementById('petNameInput').value = state.petName;
+    document.getElementById('dot2').classList.add('active');
+  } else if (step === 3) {
+    state.petName = document.getElementById('petNameInput').value.trim() || PET_TYPES[state.petTypeIdx].personality;
+    document.getElementById('step3').classList.add('active');
+    document.getElementById('dot3').classList.add('active');
+  }
+}
+
+function completeSetup() {
+  const key = document.getElementById('apiKeyInput').value.trim();
+  if (!key.startsWith('gsk_')) {
+    alert('gsk_ で始まるGroq APIキーを入力してください');
+    return;
+  }
+  state.apiKey = key;
+  state.setupDone = true;
+  saveState();
+  showApp();
+}
+
+function showApp() {
+  document.getElementById('setup').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  document.getElementById('app').style.display = 'flex';
+  document.getElementById('app').style.flexDirection = 'column';
+  document.getElementById('app').style.alignItems = 'center';
+  document.getElementById('app').style.width = '100%';
+
+  const pet = PET_TYPES[state.petTypeIdx];
+  document.getElementById('petEmoji').textContent = pet.emoji;
+  document.getElementById('petNameDisplay').textContent = state.petName;
+  updateStats();
+
+  // Greeting based on time
+  const hour = new Date().getHours();
+  const greet = hour < 6 ? 'こんな時間まで起きてるの？' :
+                hour < 12 ? 'おはよう！今日はどこ行く？' :
+                hour < 18 ? 'こんにちは！お出かけ日和だね' :
+                'こんばんは〜 夜のお散歩かな？';
+  setBubble(`${greet}${pet.suffix}！✨`);
+}
+
+function resetApp() {
+  if (confirm('ペットデータをリセットしますか？')) {
+    localStorage.removeItem('lokopet_state');
+    state = defaultState();
+    document.getElementById('setup').classList.remove('hidden');
+    document.getElementById('app').classList.add('hidden');
+    renderPetSelect();
+    document.querySelectorAll('.setup-step').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.setup-dot').forEach(d => d.classList.remove('active'));
+    document.getElementById('step1').classList.add('active');
+    document.getElementById('dot1').classList.add('active');
+  }
+}
+
+// ============================================================
+// Pet Interaction
+// ============================================================
+function tapPet(event) {
+  const pet = PET_TYPES[state.petTypeIdx];
+
+  // Heart particles
+  for (let i = 0; i < 3; i++) {
+    const heart = document.createElement('span');
+    heart.className = 'heart-particle';
+    heart.textContent = ['❤️','💕','✨','💖','⭐'][Math.floor(Math.random()*5)];
+    heart.style.left = (60 + Math.random()*40) + 'px';
+    heart.style.top = (40 + Math.random()*30) + 'px';
+    heart.style.animationDelay = (i * 0.15) + 's';
+    document.getElementById('petArea').appendChild(heart);
+    setTimeout(() => heart.remove(), 1200);
+  }
+
+  // Mood up
+  state.mood = Math.min(100, state.mood + 3);
+  saveState();
+  updateStats();
+
+  const msgs = [
+    `なでなで嬉しい${pet.suffix}〜 ✨`,
+    `もっと撫でて${pet.suffix}！💕`,
+    `えへへ${pet.suffix}〜 😊`,
+    `お出かけしたい${pet.suffix}！🗺️`,
+    `お腹すいた${pet.suffix}〜 🍖`,
+    `一緒にいると楽しい${pet.suffix}！🎵`,
+  ];
+  setBubble(msgs[Math.floor(Math.random() * msgs.length)]);
+}
+
+function changePetEmoji() {
+  state.petTypeIdx = (state.petTypeIdx + 1) % PET_TYPES.length;
+  const pet = PET_TYPES[state.petTypeIdx];
+  document.getElementById('petEmoji').textContent = pet.emoji;
+  saveState();
+  setBubble(`${pet.personality}に変身！${pet.traits}${pet.suffix}！✨`);
+}
+
+// ============================================================
+// Stats & Level
+// ============================================================
+function updateStats() {
+  document.getElementById('moodBar').style.width = state.mood + '%';
+  const expForLevel = state.level * 30;
+  document.getElementById('expBar').style.width = Math.min(100, (state.exp / expForLevel) * 100) + '%';
+  document.getElementById('exploreBar').style.width = Math.min(100, state.totalExplore * 10) + '%';
+  document.getElementById('levelBadge').textContent = `Lv.${state.level}`;
+}
+
+function gainExp(amount) {
+  state.exp += amount;
+  const expForLevel = state.level * 30;
+  if (state.exp >= expForLevel) {
+    state.exp -= expForLevel;
+    state.level++;
+    const pet = PET_TYPES[state.petTypeIdx];
+    setTimeout(() => {
+      const petEl = document.getElementById('petEmoji');
+      petEl.classList.add('happy');
+      setTimeout(() => petEl.classList.remove('happy'), 1600);
+      setBubble(`🎉 レベルアップ${pet.suffix}！Lv.${state.level}になった！もっとお出かけしよう！`);
+    }, 500);
+  }
+  state.mood = Math.min(100, state.mood + 5);
+  state.totalExplore++;
+  saveState();
+  updateStats();
+}
+
+// ============================================================
+// Bubble & Status
+// ============================================================
+function setBubble(text) {
+  document.getElementById('bubble').innerHTML = text;
+}
+
+function showBubbleActions(show) {
+  document.getElementById('bubbleActions').classList.toggle('hidden', !show);
+}
+
+// ============================================================
+// Groq API
+// ============================================================
+async function callGroq(prompt) {
+  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${state.apiKey}`
+    },
+    body: JSON.stringify({
+      model: 'llama-3.3-70b-versatile',
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 400,
+      temperature: 0.85
+    })
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error?.message || 'APIエラー');
+  }
+
+  const data = await res.json();
+  return data.choices?.[0]?.message?.content || 'うまく返事できなかった…';
+}
+
+// ============================================================
+// Reverse Geocoding
+// ============================================================
+async function reverseGeocode(lat, lon) {
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=ja&zoom=18`,
+      { headers: { 'User-Agent': 'LocoPet/2.0' } }
+    );
+    const data = await res.json();
+    const a = data.address || {};
+    const parts = [
+      a.state,
+      a.city || a.town || a.village || a.county,
+      a.suburb || a.neighbourhood || a.quarter,
+      a.road,
+    ].filter(Boolean);
+    return {
+      display: parts.join(' '),
+      short: (a.city || a.town || a.village || '') + ' ' + (a.suburb || a.neighbourhood || ''),
+      landmark: data.name || '',
+      raw: a
+    };
+  } catch(e) {
+    return { display: `${lat.toFixed(4)}, ${lon.toFixed(4)}`, short: '', landmark: '', raw: {} };
+  }
+}
+
+// ============================================================
+// Location + Ask
+// ============================================================
+async function getLocationAndAsk() {
+  if (!navigator.geolocation) {
+    setBubble('このブラウザは位置情報に対応してないみたい 😢');
+    return;
+  }
+
+  const btn = document.getElementById('mainBtn');
+  btn.disabled = true;
+  const petEl = document.getElementById('petEmoji');
+  petEl.classList.add('thinking');
+  showBubbleActions(false);
+
+  const pet = PET_TYPES[state.petTypeIdx];
+  setBubble(`どこにいるか調べてる${pet.suffix}〜 🔍`);
+
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      userLocation = {
+        lat: pos.coords.latitude,
+        lon: pos.coords.longitude,
+        accuracy: Math.round(pos.coords.accuracy)
+      };
+
+      setBubble(`地名を調べてる${pet.suffix}... 🗺️`);
+      userLocation.geo = await reverseGeocode(userLocation.lat, userLocation.lon);
+
+      const badge = document.getElementById('locationBadge');
+      badge.textContent = `📍 ${userLocation.geo.display}`;
+      badge.classList.add('visible');
+
+      await askWithLocation();
+      btn.disabled = false;
+      petEl.classList.remove('thinking');
+    },
+    (err) => {
+      btn.disabled = false;
+      petEl.classList.remove('thinking');
+      setBubble(`位置情報を教えてもらえなかった${pet.suffix}…😿<br>ブラウザの設定で許可してね！`);
+    },
+    { enableHighAccuracy: true, timeout: 15000 }
+  );
+}
+
+async function askWithLocation() {
+  const pet = PET_TYPES[state.petTypeIdx];
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
+  const dateStr = now.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' });
+
+  const modePrompts = {
+    general: '今いる場所でできることを3つ提案して。具体的な店名・施設名・地名を挙げること。',
+    food:    '周辺で食べられるご飯を3つ提案。具体的な料理名・有名店・商店街・エリア名を含むこと。',
+    spot:    '歩いて行ける観光スポット・公園・名所を3つ。具体的な固有名詞付きで。',
+    weather: `今の季節(${dateStr})のこの地域の気候の特徴と、${timeStr}現在の過ごし方・服装のアドバイスを具体的に。`,
+    chat:    'この場所の面白い歴史・文化・グルメのトリビアを2〜3個、具体的な名前付きで。',
+  };
+
+  const geo = userLocation.geo;
+  const landmark = geo.landmark ? `\n- 近くの施設: ${geo.landmark}` : '';
+
+  const prompt = `あなたは「${state.petName}」という名前の${pet.personality}ペットAI(${pet.emoji})です。
+性格: ${pet.traits}
+語尾に「${pet.suffix}」をつけてね。
+日本語でフレンドリーに、絵文字を使って、200文字以内で答えて。
+抽象的な表現は避け、必ず実在しそうな地名・店名・施設名・通り名を具体的に挙げること。
+ペットのレベルはLv.${state.level}。レベルが高いほど詳しく教えられる設定。
+
+【ユーザーの現在地】
+- 住所: ${geo.display}${landmark}
+- 日時: ${dateStr} ${timeStr}
+
+【タスク】${modePrompts[currentMode]}`;
+
+  setBubble(`考え中${pet.suffix}... 🤔`);
+
+  try {
+    const reply = await callGroq(prompt);
+    lastReply = reply;
+    setBubble(reply.replace(/\n/g, '<br>'));
+    showBubbleActions(true);
+
+    // Gain EXP
+    gainExp(10);
+
+    // Save to history
+    state.history.unshift({
+      time: now.toISOString(),
+      location: geo.short || geo.display,
+      mode: currentMode,
+      reply: reply.substring(0, 120),
+    });
+    if (state.history.length > 30) state.history.pop();
+    saveState();
+
+  } catch(e) {
+    setBubble(`エラーが起きちゃった${pet.suffix}…😿<br><small>${e.message}</small>`);
+    showBubbleActions(false);
+  }
+}
+
+// ============================================================
+// Free Chat
+// ============================================================
+async function freeChat() {
+  const msg = prompt('ペットに話しかけてみて！');
+  if (!msg) return;
+
+  const pet = PET_TYPES[state.petTypeIdx];
+  const petEl = document.getElementById('petEmoji');
+  petEl.classList.add('thinking');
+  showBubbleActions(false);
+  setBubble(`考え中${pet.suffix}... 🤔`);
+
+  const chatPrompt = `あなたは「${state.petName}」という名前の${pet.personality}ペットAI(${pet.emoji})です。
+性格: ${pet.traits}。語尾に「${pet.suffix}」をつけてね。
+日本語でフレンドリーに、絵文字を使って、150文字以内で答えて。
+
+ユーザーのメッセージ: ${msg}`;
+
+  try {
+    const reply = await callGroq(chatPrompt);
+    setBubble(reply.replace(/\n/g, '<br>'));
+    state.mood = Math.min(100, state.mood + 3);
+    gainExp(3);
+  } catch(e) {
+    setBubble(`エラー${pet.suffix}…😿 ${e.message}`);
+  } finally {
+    petEl.classList.remove('thinking');
+  }
+}
+
+// ============================================================
+// Share
+// ============================================================
+function shareResult() {
+  const pet = PET_TYPES[state.petTypeIdx];
+  const text = `${pet.emoji} ${state.petName}のおすすめ！\n\n${lastReply}\n\n🐾 #ロケペット で位置情報AIペットと冒険中！`;
+
+  if (navigator.share) {
+    navigator.share({ title: 'ロケペットの提案', text }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(text).then(() => {
+      setBubble('📋 クリップボードにコピーしたよ！SNSに貼ってね！');
+    });
+  }
+}
+
+// ============================================================
+// History
+// ============================================================
+function toggleHistory() {
+  document.getElementById('historyPanel').classList.toggle('open');
+  document.getElementById('historyOverlay').classList.toggle('open');
+  renderHistory();
+}
+
+function renderHistory() {
+  const el = document.getElementById('historyList');
+  if (state.history.length === 0) {
+    el.innerHTML = '<div class="history-empty">まだ履歴がないよ<br>📍「いまここ」を押してみて！</div>';
+    return;
+  }
+  el.innerHTML = state.history.map(h => {
+    const d = new Date(h.time);
+    const dateStr = d.toLocaleDateString('ja-JP', { month:'short', day:'numeric', weekday:'short' });
+    const timeStr = d.toLocaleTimeString('ja-JP', { hour:'2-digit', minute:'2-digit' });
+    const modeLabels = { general:'🎯', food:'🍜', spot:'📍', weather:'🌤', chat:'💬' };
+    return `<div class="history-item">
+      <div class="hi-meta">${modeLabels[h.mode]||''} ${dateStr} ${timeStr} · ${h.location}</div>
+      ${h.reply}
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// PWA Service Worker (inline registration)
+// ============================================================
+if ('serviceWorker' in navigator) {
+  // Minimal SW for PWA installability
+  const swCode = `self.addEventListener('fetch', e => e.respondWith(fetch(e.request)));`;
+  const blob = new Blob([swCode], { type: 'application/javascript' });
+  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
+}
+</script>
+</body>
+</html>
