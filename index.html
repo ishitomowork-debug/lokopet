@@ -242,9 +242,15 @@
       background: var(--card); border: 1px solid var(--border);
       border-radius: var(--radius); padding: 16px;
       margin: 24px auto 0; max-width: 388px; width: 100%;
+      transition: all 0.2s ease;
     }
+    .mission-panel.compact { padding: 12px 16px; }
     .mission-panel h3 { margin: 0 0 12px; font-size: 14px; display: flex; align-items: center; gap: 6px; color: var(--text); font-weight: 600; }
     .mission-panel h3 .mission-reset-hint { font-size: 13px; font-weight: 400; color: var(--text-sub); margin-left: auto; }
+    .mission-panel.compact h3 { margin: 0; }
+    .mission-compact-row { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
+    .mission-compact-dot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; flex-shrink: 0; }
+    .mission-compact-text { font-size: 12px; color: var(--text-sub); }
     .mission-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
     .mission-item:last-child { border-bottom: none; }
     .mission-icon { font-size: 14px; flex-shrink: 0; width: 24px; text-align: center; }
@@ -831,7 +837,25 @@ function initMissions(){const t=getTodayStr();if(state.lastMissionDate!==t){stat
 function advanceMission(id){const t=getTodayStr();if(state.lastMissionDate!==t)initMissions();const def=DAILY_MISSIONS.find(m=>m.id===id);if(!def)return;const ms=state.missions[id];if(!ms||ms.claimed)return;ms.progress=Math.min(ms.progress+1,def.goal);if(ms.progress>=def.goal&&!ms.claimed){ms.claimed=true;gainExp(def.reward);showMissionToast(def);}save();renderMissions();checkAllMissions();}
 function checkAllMissions(){if(state.missionAllClaimed)return;if(DAILY_MISSIONS.every(m=>state.missions[m.id]?.claimed)){state.missionAllClaimed=true;gainExp(10);save();document.getElementById('missionCompleteAll').classList.add('show');}}
 function showMissionToast(def){const t=document.createElement('div');t.textContent=`${def.icon} 達成！ EXP+${def.reward}`;Object.assign(t.style,{position:'fixed',top:'18px',left:'50%',transform:'translateX(-50%)',background:'var(--text)',color:'var(--bg-start)',padding:'12px 24px',borderRadius:'12px',fontSize:'0.88em',zIndex:'9999',opacity:'0',transition:'opacity 0.3s ease',fontFamily:'Noto Sans JP, sans-serif',fontWeight:'600'});document.body.appendChild(t);requestAnimationFrame(()=>{t.style.opacity='1';});setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),400);},2200);}
-function renderMissions(){const l=document.getElementById('missionList');if(!l)return;l.innerHTML=DAILY_MISSIONS.map(def=>{const ms=state.missions?.[def.id]||{progress:0,claimed:false};const pct=Math.min(ms.progress/def.goal*100,100);return `<div class="mission-item${ms.claimed?' completed':''}"><span class="mission-icon">${def.icon}</span><div class="mission-info"><div class="mission-label">${def.label} (${ms.progress}/${def.goal})</div><div class="mission-progress"><div class="mission-progress-bar" style="width:${pct}%"></div></div></div><span class="mission-reward">${ms.claimed?'✔':'EXP+'+def.reward}</span></div>`;}).join('');if(state.missionAllClaimed)document.getElementById('missionCompleteAll').classList.add('show');}
+function renderMissions(){
+  const l=document.getElementById('missionList');
+  const panel=document.getElementById('missionPanel');
+  const allDone=document.getElementById('missionCompleteAll');
+  if(!l)return;
+  if(state.missionAllClaimed){
+    // 全クリア済み → コンパクト表示
+    panel.classList.add('compact');
+    l.innerHTML=`<div class="mission-compact-row"><span class="mission-compact-dot"></span><span class="mission-compact-text">今日のミッション全クリア！ EXP+${DAILY_MISSIONS.reduce((s,m)=>s+m.reward,0)+10} 獲得済み</span></div>`;
+    allDone.classList.remove('show');
+  } else {
+    panel.classList.remove('compact');
+    l.innerHTML=DAILY_MISSIONS.map(def=>{
+      const ms=state.missions?.[def.id]||{progress:0,claimed:false};
+      const pct=Math.min(ms.progress/def.goal*100,100);
+      return `<div class="mission-item${ms.claimed?' completed':''}"><span class="mission-icon">${def.icon}</span><div class="mission-info"><div class="mission-label">${def.label} (${ms.progress}/${def.goal})</div><div class="mission-progress"><div class="mission-progress-bar" style="width:${pct}%"></div></div></div><span class="mission-reward">${ms.claimed?'✔':'EXP+'+def.reward}</span></div>`;
+    }).join('');
+  }
+}
 
 // ============================================================
 // Stats Dashboard
