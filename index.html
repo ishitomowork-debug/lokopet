@@ -122,6 +122,7 @@
       font-size: 13px; color: var(--text-sub);
     }
     .stat span { font-size: 12px; }
+    .stat-label { font-size: 10px; color: var(--text-sub); font-weight: 500; white-space: nowrap; }
     .stat-bar { width: 48px; height: 2px; background: var(--border); border-radius: 1px; overflow: hidden; }
     .stat-fill { height: 100%; border-radius: 1px; transition: width 0.15s ease; }
     .stat-fill.mood { background: var(--accent); }
@@ -253,7 +254,7 @@
     .mission-compact-text { font-size: 12px; color: var(--text-sub); }
     .mission-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
     .mission-item:last-child { border-bottom: none; }
-    .mission-icon { font-size: 14px; flex-shrink: 0; width: 24px; text-align: center; }
+    .mission-icon { font-size: 14px; flex-shrink: 0; width: 0; text-align: center; }
     .mission-info { flex: 1; min-width: 0; }
     .mission-label { font-size: 13px; color: var(--text); margin-bottom: 4px; font-weight: 500; }
     .mission-progress { height: 2px; background: var(--border); border-radius: 1px; overflow: hidden; }
@@ -556,18 +557,26 @@
   <div class="header">
     <h1><span id="petNameDisplay">ロケペット</span></h1>
     <div class="header-icons">
-      <button class="icon-btn" id="darkModeBtn" onclick="toggleDarkMode()" title="ダークモード">🌙</button>
-      <button class="icon-btn" onclick="toggleStats()" title="統計">📊</button>
-      <button class="icon-btn" onclick="toggleHistory()" title="履歴">📜</button>
-      <button class="icon-btn" onclick="toggleSettings()" title="設定">⚙️</button>
+      <button class="icon-btn" id="darkModeBtn" onclick="toggleDarkMode()" title="ダークモード">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <button class="icon-btn" onclick="toggleStats()" title="統計">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      </button>
+      <button class="icon-btn" onclick="toggleHistory()" title="履歴">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </button>
+      <button class="icon-btn" onclick="toggleSettings()" title="設定">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
     </div>
   </div>
   <div class="pet-stage">
     <div class="pet-stats">
-      <div class="stat"><span>😊</span><div class="stat-bar"><div class="stat-fill mood" id="moodBar" style="width:80%"></div></div></div>
+      <div class="stat"><span class="stat-label">気分</span><div class="stat-bar"><div class="stat-fill mood" id="moodBar" style="width:80%"></div></div></div>
       <div class="pet-level" id="levelBadge">Lv.1</div>
-      <div class="stat"><span>✨</span><div class="stat-bar"><div class="stat-fill exp" id="expBar" style="width:0%"></div></div></div>
-      <div class="stat"><span>🗺️</span><div class="stat-bar"><div class="stat-fill explore" id="exploreBar" style="width:0%"></div></div></div>
+      <div class="stat"><span class="stat-label">EXP</span><div class="stat-bar"><div class="stat-fill exp" id="expBar" style="width:0%"></div></div></div>
+      <div class="stat"><span class="stat-label">探索</span><div class="stat-bar"><div class="stat-fill explore" id="exploreBar" style="width:0%"></div></div></div>
     </div>
     <div class="pet-area" id="petArea">
       <span class="pet-emoji" id="petEmoji" onclick="tapPet(event)">🐱</span>
@@ -604,7 +613,7 @@
     <div id="missionList"></div>
     <div class="mission-complete-all" id="missionCompleteAll">全クリア！ボーナス EXP+10</div>
   </div>
-  <div class="footer">Powered by Groq + Llama 3.3</div>
+  <div class="footer">ロケペット</div>
 </div>
 
 <div class="stats-overlay" id="statsOverlay" onclick="toggleStats()"></div>
@@ -620,7 +629,7 @@
     <div class="settings-section-title">表示</div>
     <div class="settings-item" onclick="cycleThemeMode()">
       <div class="settings-item-left">
-        <span class="settings-item-icon">🌙</span>
+        <span class="settings-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
         <div class="settings-item-text"><div class="settings-item-label">テーマ</div><div class="settings-item-desc" id="themeModeDesc">自動（時間帯に合わせる）</div></div>
       </div>
       <span class="settings-item-right" id="themeModeValue">自動</span>
@@ -640,14 +649,14 @@
     <div class="settings-section-title">アカウント</div>
     <div class="settings-item" onclick="showUpgradeModal()">
       <div class="settings-item-left">
-        <span class="settings-item-icon">⭐</span>
+        <span class="settings-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
         <div class="settings-item-text"><div class="settings-item-label">プランを確認</div><div class="settings-item-desc" id="settingsPlanDesc">無料プラン（15回/日）</div></div>
       </div>
       <span class="settings-item-right">→</span>
     </div>
     <div class="settings-item" onclick="window.open('https://ofuse.me/6591717e','_blank')">
       <div class="settings-item-left">
-        <span class="settings-item-icon">☕</span>
+        <span class="settings-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></span>
         <div class="settings-item-text"><div class="settings-item-label">開発を応援する</div><div class="settings-item-desc">OFUSEで応援</div></div>
       </div>
       <span class="settings-item-right">→</span>
@@ -657,14 +666,14 @@
     <div class="settings-section-title">データ</div>
     <div class="settings-item" onclick="exportData()">
       <div class="settings-item-left">
-        <span class="settings-item-icon">📤</span>
+        <span class="settings-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></span>
         <div class="settings-item-text"><div class="settings-item-label">データをエクスポート</div><div class="settings-item-desc">冒険ログをJSON形式で保存</div></div>
       </div>
       <span class="settings-item-right">→</span>
     </div>
     <div class="settings-item danger" onclick="confirmReset()">
       <div class="settings-item-left">
-        <span class="settings-item-icon">🗑️</span>
+        <span class="settings-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></span>
         <div class="settings-item-text"><div class="settings-item-label">データをリセット</div><div class="settings-item-desc">すべてのデータを初期化します</div></div>
       </div>
       <span class="settings-item-right">→</span>
@@ -760,9 +769,12 @@ function setThemeMode(mode){
 function applyThemeMode(){
   const mode=getThemeMode();
   document.body.classList.remove('dark-mode');
-  if(mode==='dark'){document.body.classList.add('dark-mode');document.getElementById('darkModeBtn').textContent='☀️';}
-  else if(mode==='light'){document.body.classList.remove('dark-mode');document.getElementById('darkModeBtn').textContent='🌙';}
-  else{/* auto: 夜(19-5時)だけダーク */const h=new Date().getHours();if(h>=19||h<5){document.body.classList.add('dark-mode');document.getElementById('darkModeBtn').textContent='☀️';}else{document.getElementById('darkModeBtn').textContent='🌙';}}
+  const sunSVG=`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
+  const moonSVG=`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+  const btn=document.getElementById('darkModeBtn');
+  if(mode==='dark'){document.body.classList.add('dark-mode');btn.innerHTML=sunSVG;}
+  else if(mode==='light'){document.body.classList.remove('dark-mode');btn.innerHTML=moonSVG;}
+  else{const h=new Date().getHours();if(h>=19||h<5){document.body.classList.add('dark-mode');btn.innerHTML=sunSVG;}else{btn.innerHTML=moonSVG;}}
   updateThemeModeUI();
 }
 function cycleThemeMode(){
@@ -831,7 +843,7 @@ async function fetchWeather(lat,lon){try{const r=await fetch(`https://api.open-m
 // ============================================================
 // Missions
 // ============================================================
-const DAILY_MISSIONS=[{id:'explore',icon:'🗺️',label:'冒険に出る',goal:3,reward:20},{id:'tap',icon:'🐾',label:'相棒をなでる',goal:5,reward:10},{id:'freechat',icon:'💬',label:'話しかける',goal:1,reward:5},{id:'share',icon:'📤',label:'冒険をシェア',goal:1,reward:15}];
+const DAILY_MISSIONS=[{id:'explore',icon:'',label:'冒険に出る',goal:3,reward:20},{id:'tap',icon:'',label:'なでる',goal:5,reward:10},{id:'freechat',icon:'',label:'話しかける',goal:1,reward:5},{id:'share',icon:'',label:'シェアする',goal:1,reward:15}];
 function getTodayStr(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 function initMissions(){const t=getTodayStr();if(state.lastMissionDate!==t){state.lastMissionDate=t;state.missions={};DAILY_MISSIONS.forEach(m=>{state.missions[m.id]={progress:0,claimed:false};});state.missionAllClaimed=false;save();}if(!state.missions||Object.keys(state.missions).length===0){state.missions={};DAILY_MISSIONS.forEach(m=>{state.missions[m.id]={progress:0,claimed:false};});save();}document.getElementById('missionPanel').style.display='';renderMissions();}
 function advanceMission(id){const t=getTodayStr();if(state.lastMissionDate!==t)initMissions();const def=DAILY_MISSIONS.find(m=>m.id===id);if(!def)return;const ms=state.missions[id];if(!ms||ms.claimed)return;ms.progress=Math.min(ms.progress+1,def.goal);if(ms.progress>=def.goal&&!ms.claimed){ms.claimed=true;gainExp(def.reward);showMissionToast(def);}save();renderMissions();checkAllMissions();}
