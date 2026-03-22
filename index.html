@@ -363,6 +363,54 @@
     ::selection { background: rgba(224,122,95,0.25); }
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-thumb { background: rgba(139,126,106,0.25); border-radius: 3px; }
+
+    /* 残回数バッジ */
+    .remaining-badge {
+      display: none; font-size: 0.72rem; padding: 4px 10px; border-radius: 3px;
+      background: var(--card-solid); color: var(--text-sub); font-weight: 600;
+      border: 1px dashed rgba(180,170,150,0.3); white-space: nowrap;
+    }
+    .remaining-badge.visible { display: inline-block; }
+
+    /* アップグレードモーダル */
+    .upgrade-modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 10000;
+      background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+      justify-content: center; align-items: center; padding: 20px;
+    }
+    .upgrade-modal-overlay.active { display: flex; }
+    .upgrade-modal {
+      background: var(--card-solid); border-radius: 12px; padding: 32px 24px;
+      max-width: 360px; width: 100%; text-align: center; position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .upgrade-modal h2 { font-size: 1.1rem; margin-bottom: 8px; color: var(--text); }
+    .upgrade-plan {
+      background: rgba(224,122,95,0.08); border: 2px dashed var(--primary);
+      border-radius: 8px; padding: 20px 16px; margin-bottom: 16px;
+    }
+    .upgrade-plan-name { font-weight: 700; color: var(--primary); font-size: 1rem; margin-bottom: 4px; }
+    .upgrade-plan-price { font-size: 1.3rem; color: var(--text); margin-bottom: 12px; }
+    .upgrade-plan-features {
+      list-style: none; padding: 0; margin: 0 0 16px 0; font-size: 0.85rem; color: var(--text-sub);
+    }
+    .upgrade-plan-features li::before { content: '✓ '; color: var(--primary); font-weight: 700; }
+    .upgrade-plan-features li { margin-bottom: 4px; }
+    .upgrade-btn { display: block; text-decoration: none; text-align: center; }
+    .upgrade-close {
+      background: none; border: none; color: var(--text-sub); font-size: 0.85rem;
+      cursor: pointer; font-family: inherit; padding: 8px; text-decoration: underline;
+    }
+
+    /* 応援ボタン */
+    .support-float-btn {
+      position: fixed; bottom: 20px; right: 20px; z-index: 100;
+      background: var(--primary); color: #fff; border: none;
+      padding: 10px 16px; border-radius: 24px; font-family: inherit;
+      font-size: 0.82rem; font-weight: 700; cursor: pointer;
+      box-shadow: 0 4px 16px rgba(224,122,95,0.35); transition: transform 0.15s;
+    }
+    .support-float-btn:active { transform: scale(0.93); }
   </style>
 </head>
 <body>
@@ -381,19 +429,11 @@
       <div style="font-size:60px;margin-bottom:8px" id="step2Pet">🐱</div>
       <h2>なんて呼ぶ？</h2>
       <input class="setup-name-input" id="petNameInput" placeholder="好きな名前をどうぞ" maxlength="10" />
-      <button class="main-btn" onclick="setupNext(3)">いい名前 →</button>
-    </div>
-    <div class="setup-step" id="step3">
-      <div style="font-size:48px;margin-bottom:8px">🔑</div>
-      <h2>あと一歩だけ</h2>
-      <p><strong>Groq</strong>のAPIキー(無料)を入れたら準備完了<br>👉 <a href="https://console.groq.com/keys" target="_blank" style="color:var(--primary)">ここで30秒で取れる</a></p>
-      <input class="setup-input" type="password" id="apiKeyInput" placeholder="gsk_..." />
       <button class="main-btn" onclick="completeSetup()">冒険に出る 🐾</button>
     </div>
     <div class="setup-dots">
       <div class="setup-dot active" id="dot1"></div>
       <div class="setup-dot" id="dot2"></div>
-      <div class="setup-dot" id="dot3"></div>
     </div>
   </div>
 </div>
@@ -442,6 +482,7 @@
     </div>
     <div class="location-badge" id="locationBadge">📍 位置情報を取得してね</div>
     <div class="weather-badge" id="weatherBadge"><span id="weatherIcon">☀️</span><span class="weather-temp" id="weatherTemp">--°C</span></div>
+    <div class="remaining-badge" id="remainingBadge"></div>
   </div>
   <div class="mission-panel" id="missionPanel" style="display:none">
     <h3>📋 今日のやること <span class="mission-reset-hint">毎日0時リセット</span></h3>
@@ -511,7 +552,7 @@ const PET_TYPES = [
 // ============================================================
 let state = loadState();
 function defaultState() {
-  return { petTypeIdx:0, petName:'', apiKey:'', level:1, exp:0, mood:80, totalExplore:0, history:[], setupDone:false, missions:{}, lastMissionDate:'', missionAllClaimed:false, loginDates:[] };
+  return { petTypeIdx:0, petName:'', level:1, exp:0, mood:80, totalExplore:0, history:[], setupDone:false, missions:{}, lastMissionDate:'', missionAllClaimed:false, loginDates:[] };
 }
 function loadState() {
   try { const s=JSON.parse(localStorage.getItem('lokopet_state')); if(s&&s.setupDone){s.missions=s.missions||{};s.lastMissionDate=s.lastMissionDate||'';s.missionAllClaimed=s.missionAllClaimed||false;s.loginDates=s.loginDates||[];return s;} return defaultState(); } catch{return defaultState();}
@@ -571,7 +612,7 @@ window.onload=()=>{
   applyTimeTheme();
   if(localStorage.getItem('darkMode')==='on'){document.body.classList.add('dark-mode');document.getElementById('darkModeBtn').textContent='☀️';}
   setInterval(applyTimeTheme,5*60*1000);
-  const oldKey=localStorage.getItem('groq_api_key');if(oldKey&&!state.setupDone){state.apiKey=oldKey;localStorage.removeItem('groq_api_key');}
+  localStorage.removeItem('groq_api_key');
   if(state.setupDone)showApp();else renderPetSelect();
   document.querySelectorAll('.chip').forEach(c=>{c.addEventListener('click',()=>{document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));c.classList.add('active');currentMode=c.dataset.mode;});});
   setInterval(()=>{if(state.mood>20){state.mood-=1;save();updatePetStats();}},30*60*1000);
@@ -579,8 +620,8 @@ window.onload=()=>{
 
 function renderPetSelect(){document.getElementById('petSelect').innerHTML=PET_TYPES.map((p,i)=>`<button class="setup-pet-option${i===state.petTypeIdx?' selected':''}" onclick="selectPetType(${i})">${p.emoji}</button>`).join('');}
 function selectPetType(i){state.petTypeIdx=i;document.querySelectorAll('.setup-pet-option').forEach((el,j)=>el.classList.toggle('selected',j===i));}
-function setupNext(step){document.querySelectorAll('.setup-step').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.setup-dot').forEach(d=>d.classList.remove('active'));if(step===2){document.getElementById('step2').classList.add('active');document.getElementById('step2Pet').textContent=PET_TYPES[state.petTypeIdx].emoji;document.getElementById('petNameInput').value=state.petName;document.getElementById('dot2').classList.add('active');}else if(step===3){state.petName=document.getElementById('petNameInput').value.trim()||PET_TYPES[state.petTypeIdx].personality;document.getElementById('step3').classList.add('active');document.getElementById('dot3').classList.add('active');}}
-function completeSetup(){const k=document.getElementById('apiKeyInput').value.trim();if(!k.startsWith('gsk_')){alert('gsk_ で始まるGroq APIキーを入力してください');return;}state.apiKey=k;state.setupDone=true;save();showApp();}
+function setupNext(step){document.querySelectorAll('.setup-step').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.setup-dot').forEach(d=>d.classList.remove('active'));if(step===2){document.getElementById('step2').classList.add('active');document.getElementById('step2Pet').textContent=PET_TYPES[state.petTypeIdx].emoji;document.getElementById('petNameInput').value=state.petName;document.getElementById('dot2').classList.add('active');}}
+function completeSetup(){state.petName=document.getElementById('petNameInput').value.trim()||PET_TYPES[state.petTypeIdx].personality;state.setupDone=true;save();showApp();}
 
 function showApp(){
   document.getElementById('setup').classList.add('hidden');
@@ -593,6 +634,7 @@ function showApp(){
   const greet=h<6?pet.greeting.earlyMorning:h<12?pet.greeting.morning:h<18?pet.greeting.afternoon:pet.greeting.evening;
   setBubble(greet);
   initMissions();initLoginTracking();
+  checkDeviceStatus();
 }
 
 function resetApp(){if(confirm('データをリセットする？')){localStorage.removeItem('lokopet_state');state=defaultState();document.getElementById('setup').classList.remove('hidden');document.getElementById('app').classList.add('hidden');renderPetSelect();document.querySelectorAll('.setup-step').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.setup-dot').forEach(d=>d.classList.remove('active'));document.getElementById('step1').classList.add('active');document.getElementById('dot1').classList.add('active');}}
@@ -613,9 +655,62 @@ function setBubble(t){document.getElementById('bubble').innerHTML=t;}
 function showBubbleActions(s){document.getElementById('bubbleActions').classList.toggle('hidden',!s);}
 
 // ============================================================
-// Groq API
+// Device ID
 // ============================================================
-async function callGroq(p){const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${state.apiKey}`},body:JSON.stringify({model:'llama-3.3-70b-versatile',messages:[{role:'user',content:p}],max_tokens:400,temperature:0.85})});if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'APIエラー');}const d=await r.json();return d.choices?.[0]?.message?.content||'...';}
+function getDeviceId(){let id=localStorage.getItem('lokopet_device_id');if(!id){id=crypto.randomUUID();localStorage.setItem('lokopet_device_id',id);}return id;}
+
+// ============================================================
+// API Proxy
+// ============================================================
+const API_BASE='https://lokopet-api.ishitomo-work.workers.dev';
+
+async function callGroq(p){
+  const r=await fetch(`${API_BASE}/api/chat`,{
+    method:'POST',
+    headers:{'Content-Type':'application/json','X-Device-ID':getDeviceId()},
+    body:JSON.stringify({messages:[{role:'user',content:p}],max_tokens:400,temperature:0.85})
+  });
+  if(r.status===429){
+    const e=await r.json();
+    showUpgradeModal();
+    throw new Error('今日の無料回数(5回)を使い切ったよ。明日また遊ぼう！\nもっと遊びたい？ → プレミアムプラン');
+  }
+  if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'APIエラー');}
+  const d=await r.json();
+  // 残回数を更新
+  if(d._lokopet){updateRemainingBadge(d._lokopet);}
+  return d.choices?.[0]?.message?.content||'...';
+}
+
+function updateRemainingBadge(info){
+  const el=document.getElementById('remainingBadge');
+  if(!el)return;
+  if(info.tier==='premium'){el.textContent='✨ プレミアム';el.style.background='var(--primary)';el.style.color='#fff';}
+  else{el.textContent=`残り ${info.remaining}/${info.total} 回`;el.style.background=info.remaining<=1?'#e07a5f':'var(--card-solid)';el.style.color=info.remaining<=1?'#fff':'var(--text-sub)';}
+  el.classList.add('visible');
+}
+
+function showUpgradeModal(){
+  document.getElementById('upgradeModal').classList.add('active');
+}
+function closeUpgradeModal(e){
+  if(e&&e.target!==e.currentTarget)return;
+  document.getElementById('upgradeModal').classList.remove('active');
+}
+
+async function checkDeviceStatus(){
+  try{
+    const r=await fetch(`${API_BASE}/api/status`,{headers:{'X-Device-ID':getDeviceId()}});
+    if(r.ok){const d=await r.json();updateRemainingBadge(d);}
+  }catch(e){}
+}
+
+// Stripe Payment Link（デプロイ後にURLを設定）
+const STRIPE_PAYMENT_LINK='https://buy.stripe.com/PLACEHOLDER';
+function openStripePayment(){
+  const url=`${STRIPE_PAYMENT_LINK}?client_reference_id=${getDeviceId()}`;
+  window.open(url,'_blank');
+}
 
 // ============================================================
 // Reverse Geocoding
@@ -688,5 +783,31 @@ function renderHistory(){const el=document.getElementById('historyList');if(stat
 
 if('serviceWorker' in navigator){const sw=`self.addEventListener('fetch',e=>e.respondWith(fetch(e.request)));`;navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(()=>{});}
 </script>
+
+<!-- アップグレードモーダル -->
+<div id="upgradeModal" class="upgrade-modal-overlay" onclick="closeUpgradeModal(event)">
+  <div class="upgrade-modal">
+    <div style="font-size:48px;margin-bottom:8px">🐾</div>
+    <h2>今日の冒険回数を使い切ったよ</h2>
+    <p style="color:var(--text-sub);margin-bottom:16px">無料プランは1日5回まで。<br>プレミアムなら回数無制限で遊べるよ！</p>
+    <div class="upgrade-plan">
+      <div class="upgrade-plan-name">✨ プレミアムプラン</div>
+      <div class="upgrade-plan-price">月額 <strong>380円</strong></div>
+      <ul class="upgrade-plan-features">
+        <li>回数無制限</li>
+        <li>毎日何回でも冒険OK</li>
+        <li>開発を応援できる</li>
+      </ul>
+      <a class="main-btn upgrade-btn" id="stripeLink" href="#" target="_blank" onclick="openStripePayment()">プレミアムにする</a>
+    </div>
+    <button class="upgrade-close" onclick="closeUpgradeModal(event)">明日まで待つ</button>
+  </div>
+</div>
+
+<!-- 応援ボタン -->
+<button class="support-float-btn" onclick="window.open('https://ofuse.me/#','_blank')" title="開発者を応援する">
+  ☕ 応援する
+</button>
+
 </body>
 </html>
