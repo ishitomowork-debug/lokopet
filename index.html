@@ -443,6 +443,80 @@
     .support-float-btn:hover { color: var(--text); }
     .support-float-btn:active { transform: scale(0.98); }
 
+    /* ===== Settings Panel ===== */
+    .settings-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background: rgba(0,0,0,0.2); z-index: 99; display: none; backdrop-filter: blur(2px); }
+    .settings-overlay.open { display: block; }
+    .settings-panel {
+      position: fixed; top: 0; right: -100%; width: min(88vw, 380px); height: 100dvh;
+      background: var(--bg); border-left: 1px solid var(--border);
+      transition: right 0.25s cubic-bezier(0.16,1,0.3,1); z-index: 100; padding: 24px 16px; overflow-y: auto;
+    }
+    .settings-panel.open { right: 0; }
+    .settings-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .settings-header h2 { font-size: 16px; color: var(--text); font-weight: 600; letter-spacing: -0.02em; }
+    .settings-close { font-size: 16px; cursor: pointer; background: none; border: none; color: var(--text-sub); padding: 4px; }
+    .settings-section { margin-bottom: 24px; }
+    .settings-section-title { font-size: 11px; color: var(--text-sub); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; padding: 0 4px; }
+    .settings-item {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 12px; background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); margin-bottom: 6px; cursor: pointer;
+      transition: all var(--transition);
+    }
+    .settings-item:hover { background: rgba(0,0,0,0.02); }
+    body.dark-mode .settings-item:hover, body.time-night .settings-item:hover { background: rgba(255,255,255,0.04); }
+    .settings-item:active { transform: scale(0.99); }
+    .settings-item-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .settings-item-icon { font-size: 16px; width: 24px; text-align: center; flex-shrink: 0; }
+    .settings-item-text { min-width: 0; }
+    .settings-item-label { font-size: 14px; color: var(--text); font-weight: 500; }
+    .settings-item-desc { font-size: 12px; color: var(--text-sub); margin-top: 1px; }
+    .settings-item-right { flex-shrink: 0; font-size: 13px; color: var(--text-sub); }
+    .settings-toggle {
+      width: 40px; height: 22px; border-radius: 11px; border: none; padding: 2px;
+      background: var(--border-mid); cursor: pointer; transition: background var(--transition); position: relative;
+    }
+    .settings-toggle.active { background: var(--accent); }
+    .settings-toggle::after {
+      content: ''; position: absolute; top: 2px; left: 2px;
+      width: 18px; height: 18px; border-radius: 50%; background: white;
+      transition: transform var(--transition); box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+    .settings-toggle.active::after { transform: translateX(18px); }
+    .settings-divider { height: 1px; background: var(--border); margin: 16px 0; }
+    .settings-danger { color: #ef4444; }
+    .settings-item.danger .settings-item-label { color: #ef4444; }
+    .settings-item.danger:hover { background: rgba(239,68,68,0.04); }
+    .settings-version { text-align: center; padding: 16px; font-size: 12px; color: var(--text-sub); opacity: 0.5; }
+
+    /* Confirm dialog (replaces browser confirm) */
+    .confirm-overlay {
+      display: none; position: fixed; inset: 0; z-index: 10001;
+      background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
+      justify-content: center; align-items: center; padding: 20px;
+    }
+    .confirm-overlay.active { display: flex; }
+    .confirm-dialog {
+      background: var(--card-solid); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px; max-width: 320px; width: 100%; text-align: center;
+    }
+    .confirm-dialog h3 { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+    .confirm-dialog p { font-size: 14px; color: var(--text-sub); margin-bottom: 20px; line-height: 1.6; }
+    .confirm-actions { display: flex; gap: 8px; }
+    .confirm-cancel {
+      flex: 1; padding: 10px; border: 1px solid var(--border-mid); border-radius: var(--radius-sm);
+      background: transparent; color: var(--text); font-size: 14px; font-weight: 500;
+      cursor: pointer; font-family: inherit; transition: all var(--transition);
+    }
+    .confirm-cancel:hover { background: rgba(0,0,0,0.03); }
+    .confirm-ok {
+      flex: 1; padding: 10px; border: none; border-radius: var(--radius-sm);
+      background: #ef4444; color: white; font-size: 14px; font-weight: 500;
+      cursor: pointer; font-family: inherit; transition: all var(--transition);
+    }
+    .confirm-ok:hover { background: #dc2626; }
+    .confirm-cancel:active, .confirm-ok:active { transform: scale(0.97); }
+
     /* Smooth page transitions */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
@@ -481,7 +555,7 @@
       <button class="icon-btn" id="darkModeBtn" onclick="toggleDarkMode()" title="ダークモード">🌙</button>
       <button class="icon-btn" onclick="toggleStats()" title="統計">📊</button>
       <button class="icon-btn" onclick="toggleHistory()" title="履歴">📜</button>
-      <button class="icon-btn" onclick="resetApp()" title="設定">⚙️</button>
+      <button class="icon-btn" onclick="toggleSettings()" title="設定">⚙️</button>
     </div>
   </div>
   <div class="pet-stage">
@@ -526,7 +600,7 @@
     <div id="missionList"></div>
     <div class="mission-complete-all" id="missionCompleteAll">全クリア！ボーナス EXP+10</div>
   </div>
-  <div class="footer">Powered by Groq + Llama 3.3 | <a href="#" onclick="resetApp()">リセット</a></div>
+  <div class="footer">Powered by Groq + Llama 3.3</div>
 </div>
 
 <div class="stats-overlay" id="statsOverlay" onclick="toggleStats()"></div>
@@ -534,6 +608,77 @@
 
 <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
 <div class="history-panel" id="historyPanel"><div class="history-header"><h2>冒険ログ</h2><button class="history-close" onclick="toggleHistory()">✕</button></div><div id="historyList"><div class="history-empty">まだログがないよ<br>冒険に出よう</div></div></div>
+
+<div class="settings-overlay" id="settingsOverlay" onclick="toggleSettings()"></div>
+<div class="settings-panel" id="settingsPanel">
+  <div class="settings-header"><h2>設定</h2><button class="settings-close" onclick="toggleSettings()">✕</button></div>
+  <div class="settings-section">
+    <div class="settings-section-title">表示</div>
+    <div class="settings-item" onclick="toggleDarkMode()">
+      <div class="settings-item-left">
+        <span class="settings-item-icon">🌙</span>
+        <div class="settings-item-text"><div class="settings-item-label">ダークモード</div><div class="settings-item-desc">夜間は自動で切り替わります</div></div>
+      </div>
+      <button class="settings-toggle" id="darkModeToggle"></button>
+    </div>
+  </div>
+  <div class="settings-section">
+    <div class="settings-section-title">相棒</div>
+    <div class="settings-item" onclick="changePetEmoji()">
+      <div class="settings-item-left">
+        <span class="settings-item-icon" id="settingsPetIcon">🐱</span>
+        <div class="settings-item-text"><div class="settings-item-label">ペットを変更</div><div class="settings-item-desc" id="settingsPetName">現在: 関西グルメ猫</div></div>
+      </div>
+      <span class="settings-item-right">→</span>
+    </div>
+  </div>
+  <div class="settings-section">
+    <div class="settings-section-title">アカウント</div>
+    <div class="settings-item" onclick="showUpgradeModal()">
+      <div class="settings-item-left">
+        <span class="settings-item-icon">⭐</span>
+        <div class="settings-item-text"><div class="settings-item-label">プランを確認</div><div class="settings-item-desc" id="settingsPlanDesc">無料プラン（15回/日）</div></div>
+      </div>
+      <span class="settings-item-right">→</span>
+    </div>
+    <div class="settings-item" onclick="window.open('https://ofuse.me/6591717e','_blank')">
+      <div class="settings-item-left">
+        <span class="settings-item-icon">☕</span>
+        <div class="settings-item-text"><div class="settings-item-label">開発を応援する</div><div class="settings-item-desc">OFUSEで応援</div></div>
+      </div>
+      <span class="settings-item-right">→</span>
+    </div>
+  </div>
+  <div class="settings-section">
+    <div class="settings-section-title">データ</div>
+    <div class="settings-item" onclick="exportData()">
+      <div class="settings-item-left">
+        <span class="settings-item-icon">📤</span>
+        <div class="settings-item-text"><div class="settings-item-label">データをエクスポート</div><div class="settings-item-desc">冒険ログをJSON形式で保存</div></div>
+      </div>
+      <span class="settings-item-right">→</span>
+    </div>
+    <div class="settings-item danger" onclick="confirmReset()">
+      <div class="settings-item-left">
+        <span class="settings-item-icon">🗑️</span>
+        <div class="settings-item-text"><div class="settings-item-label">データをリセット</div><div class="settings-item-desc">すべてのデータを初期化します</div></div>
+      </div>
+      <span class="settings-item-right">→</span>
+    </div>
+  </div>
+  <div class="settings-version">ロケペット v1.0 — Device ID: <span id="settingsDeviceId">-</span></div>
+</div>
+
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-dialog">
+    <h3 id="confirmTitle">確認</h3>
+    <p id="confirmMessage">本当にリセットしますか？</p>
+    <div class="confirm-actions">
+      <button class="confirm-cancel" onclick="closeConfirm()">やめる</button>
+      <button class="confirm-ok" id="confirmOkBtn" onclick="executeReset()">リセット</button>
+    </div>
+  </div>
+</div>
 
 <div id="shareCardOverlay" class="share-card-overlay" onclick="closeShareCard(event)">
   <div class="share-card" onclick="event.stopPropagation()">
@@ -603,7 +748,51 @@ let currentMode='general',userLocation=null,lastReply='',currentWeather=null;
 // ============================================================
 const TIME_CLASSES=['time-morning','time-afternoon','time-evening','time-night'];
 function applyTimeTheme(){const h=new Date().getHours();const c=h>=5&&h<11?'time-morning':h>=11&&h<16?'time-afternoon':h>=16&&h<19?'time-evening':'time-night';document.body.classList.remove(...TIME_CLASSES);document.body.classList.add(c);}
-function toggleDarkMode(){const a=document.body.classList.toggle('dark-mode');document.getElementById('darkModeBtn').textContent=a?'☀️':'🌙';localStorage.setItem('darkMode',a?'on':'off');}
+function toggleDarkMode(){const a=document.body.classList.toggle('dark-mode');document.getElementById('darkModeBtn').textContent=a?'☀️':'🌙';localStorage.setItem('darkMode',a?'on':'off');const t=document.getElementById('darkModeToggle');if(t){if(a)t.classList.add('active');else t.classList.remove('active');}}
+
+// ============================================================
+// Settings Panel
+// ============================================================
+function toggleSettings(){
+  const p=document.getElementById('settingsPanel');
+  const o=document.getElementById('settingsOverlay');
+  const isOpen=p.classList.toggle('open');
+  o.classList.toggle('open');
+  if(isOpen)updateSettingsInfo();
+}
+function updateSettingsInfo(){
+  const pet=PET_TYPES[state.petTypeIdx];
+  document.getElementById('settingsPetIcon').textContent=pet.emoji;
+  document.getElementById('settingsPetName').textContent='現在: '+pet.personality;
+  const dm=document.body.classList.contains('dark-mode');
+  const t=document.getElementById('darkModeToggle');
+  if(dm)t.classList.add('active');else t.classList.remove('active');
+  document.getElementById('settingsDeviceId').textContent=getDeviceId().slice(0,8)+'...';
+}
+function confirmReset(){
+  document.getElementById('confirmOverlay').classList.add('active');
+}
+function closeConfirm(){
+  document.getElementById('confirmOverlay').classList.remove('active');
+}
+function executeReset(){
+  closeConfirm();toggleSettings();
+  localStorage.removeItem('lokopet_state');state=defaultState();
+  document.getElementById('setup').classList.remove('hidden');
+  document.getElementById('app').classList.add('hidden');
+  renderPetSelect();
+  document.querySelectorAll('.setup-step').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.setup-dot').forEach(d=>d.classList.remove('active'));
+  document.getElementById('step1').classList.add('active');
+  document.getElementById('dot1').classList.add('active');
+}
+function exportData(){
+  const data={state:state,deviceId:getDeviceId(),exportedAt:new Date().toISOString()};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='lokopet-data.json';a.click();
+  URL.revokeObjectURL(url);
+}
 
 // ============================================================
 // Weather
@@ -674,7 +863,7 @@ function showApp(){
   checkDeviceStatus();
 }
 
-function resetApp(){if(confirm('データをリセットする？')){localStorage.removeItem('lokopet_state');state=defaultState();document.getElementById('setup').classList.remove('hidden');document.getElementById('app').classList.add('hidden');renderPetSelect();document.querySelectorAll('.setup-step').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.setup-dot').forEach(d=>d.classList.remove('active'));document.getElementById('step1').classList.add('active');document.getElementById('dot1').classList.add('active');}}
+function resetApp(){confirmReset();}
 
 // ============================================================
 // Pet Interaction
