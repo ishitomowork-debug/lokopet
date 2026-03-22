@@ -788,10 +788,8 @@ function updateSettingsInfo(){
   const pet=PET_TYPES[state.petTypeIdx];
   document.getElementById('settingsPetIcon').textContent=pet.emoji;
   document.getElementById('settingsPetName').textContent='現在: '+pet.personality;
-  const dm=document.body.classList.contains('dark-mode');
-  const t=document.getElementById('darkModeToggle');
-  if(dm)t.classList.add('active');else t.classList.remove('active');
   document.getElementById('settingsDeviceId').textContent=getDeviceId().slice(0,8)+'...';
+  updateThemeModeUI();
 }
 function confirmReset(){
   document.getElementById('confirmOverlay').classList.add('active');
