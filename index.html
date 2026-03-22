@@ -3,467 +3,393 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>ロケペット - 位置情報AIペット</title>
-  <meta name="description" content="あなたの位置情報をもとに提案してくれるAIペット。育てて、一緒にお出かけしよう！" />
-  <meta name="theme-color" content="#7c4dff" />
+  <title>ロケペット - 冒険手帳</title>
+  <meta name="description" content="どこにいても退屈しない。位置情報AIペットと一緒に街を冒険しよう。" />
+  <meta name="theme-color" content="#e07a5f" />
   <link rel="manifest" href="manifest.json" />
-  <meta property="og:title" content="ロケペット - 位置情報AIペット" />
-  <meta property="og:description" content="位置情報をもとに提案してくれるAIペットを育てよう！" />
+  <meta property="og:title" content="ロケペット - 冒険手帳" />
+  <meta property="og:description" content="どこにいても退屈しない。AIペットと街を冒険しよう。" />
   <meta property="og:type" content="website" />
   <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>" />
+  @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap');
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap');
+
     :root {
-      --primary: #7c4dff;
-      --primary-light: #b388ff;
-      --accent: #e040fb;
-      --bg-start: #e8eaf6;
-      --bg-end: #fce4ec;
-      --card: rgba(255,255,255,0.85);
-      --card-solid: #fff;
-      --text: #333;
-      --text-sub: #888;
-      --radius: 20px;
-      --shadow: 0 4px 24px rgba(0,0,0,0.08);
-      --shadow-lg: 0 8px 40px rgba(0,0,0,0.12);
+      --primary: #e07a5f;
+      --primary-light: #f2cc8f;
+      --accent: #3d405b;
+      --bg-start: #faf3e0;
+      --bg-end: #f4e8c1;
+      --card: #fffef7;
+      --card-solid: #fffdf5;
+      --text: #2d2d2d;
+      --text-sub: #8b7e6a;
+      --radius: 6px;
+      --shadow: 0 2px 8px rgba(139,126,106,0.12);
+      --shadow-lg: 0 4px 16px rgba(139,126,106,0.18);
+      --tape-color: rgba(200,190,160,0.55);
+      --line-color: rgba(180,170,150,0.18);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic Pro', 'Segoe UI', sans-serif;
-      background: linear-gradient(160deg, var(--bg-start) 0%, var(--bg-end) 100%);
+      font-family: 'Zen Maru Gothic', 'Hiragino Kaku Gothic ProN', sans-serif;
       min-height: 100dvh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 0;
-      overflow-x: hidden;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 0; overflow-x: hidden;
       -webkit-tap-highlight-color: transparent;
-      transition: background 1.5s ease, color 0.5s ease;
+      color: var(--text);
+      background-color: var(--bg-start);
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 31px, var(--line-color) 31px, var(--line-color) 32px),
+        linear-gradient(90deg, transparent 39px, #e8b4b8 39px, #e8b4b8 40px, transparent 40px);
+      transition: background-color 0.8s ease;
+    }
+    body::before {
+      content: ''; position: fixed; top: 0; left: 0;
+      width: 48px; height: 100%;
+      background: linear-gradient(90deg, rgba(180,160,120,0.08) 0%, transparent 100%);
+      pointer-events: none; z-index: 0;
     }
 
-    /* ===== Time-based Themes (コンテンツ部 Eito) ===== */
+    /* ===== Time Themes (手帳テイスト) ===== */
     body.time-morning {
-      --primary: #42a5f5; --primary-light: #90caf9; --accent: #26c6da;
-      --bg-start: #e3f2fd; --bg-end: #b3e5fc;
-      --card: rgba(255,255,255,0.88); --card-solid: #fff;
-      --text: #263238; --text-sub: #78909c;
+      --primary: #5b8a9a; --primary-light: #a8d8ea; --accent: #3d5a6e;
+      --bg-start: #e8f4f8; --bg-end: #d4ecf7;
+      --card: #f5fbff; --card-solid: #f0f8ff;
+      --text: #2d3b45; --text-sub: #7a9aaa;
+      --tape-color: rgba(168,216,234,0.5);
     }
     body.time-afternoon {
-      --primary: #7c4dff; --primary-light: #b388ff; --accent: #e040fb;
-      --bg-start: #e8eaf6; --bg-end: #fce4ec;
-      --card: rgba(255,255,255,0.85); --card-solid: #fff;
-      --text: #333; --text-sub: #888;
+      --primary: #e07a5f; --primary-light: #f2cc8f; --accent: #3d405b;
+      --bg-start: #faf3e0; --bg-end: #f4e8c1;
+      --card: #fffef7; --card-solid: #fffdf5;
+      --text: #2d2d2d; --text-sub: #8b7e6a;
     }
     body.time-evening {
-      --primary: #ff7043; --primary-light: #ffab91; --accent: #ec407a;
-      --bg-start: #fff3e0; --bg-end: #fce4ec;
-      --card: rgba(255,255,255,0.82); --card-solid: #fff;
-      --text: #3e2723; --text-sub: #8d6e63;
+      --primary: #c1594a; --primary-light: #e8a87c; --accent: #5c3d2e;
+      --bg-start: #f5e6d0; --bg-end: #ecdbc4;
+      --card: #fdf6ec; --card-solid: #faf0e2;
+      --text: #3b2e22; --text-sub: #9e8672;
     }
     body.time-night {
-      --primary: #b388ff; --primary-light: #7c4dff; --accent: #ea80fc;
-      --bg-start: #1a1a2e; --bg-end: #16213e;
-      --card: rgba(30,30,50,0.85); --card-solid: #1e1e32;
-      --text: #e0e0e0; --text-sub: #9e9e9e;
+      --primary: #d4956b; --primary-light: #a07850; --accent: #c8b89a;
+      --bg-start: #2c2418; --bg-end: #3a2e1e;
+      --card: rgba(60,48,32,0.9); --card-solid: #3c3020;
+      --text: #e8dcc8; --text-sub: #9a8b72;
     }
     body.dark-mode {
-      --primary: #b388ff; --primary-light: #7c4dff; --accent: #ea80fc;
-      --bg-start: #121212; --bg-end: #1e1e32;
-      --card: rgba(30,30,50,0.88); --card-solid: #1e1e32;
-      --text: #e0e0e0; --text-sub: #9e9e9e;
+      --primary: #e8c170; --primary-light: #7ab87a; --accent: #f0e6d0;
+      --bg-start: #2a3a2a; --bg-end: #1e2e1e;
+      --card: rgba(50,65,50,0.85); --card-solid: #324132;
+      --text: #e8e4d8; --text-sub: #a0b89a;
     }
 
-    /* ===== Header ===== */
+    /* ===== Header (手帳の表紙風) ===== */
     .header {
       width: 100%; padding: 16px 20px 8px;
       display: flex; justify-content: space-between; align-items: center;
       max-width: 420px;
     }
-    .header h1 { font-size: 1.2rem; color: var(--text); font-weight: 700; }
+    .header h1 {
+      font-size: 1.3rem; color: var(--accent); font-weight: 900;
+      letter-spacing: 0.02em; position: relative; padding-left: 20px;
+    }
+    .header h1::before {
+      content: ''; position: absolute; left: 0; top: -4px;
+      width: 12px; height: 28px; background: var(--primary);
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 75%, 0 100%);
+    }
     .header-icons { display: flex; gap: 8px; }
     .icon-btn {
       width: 36px; height: 36px; border-radius: 50%;
-      border: none; background: var(--card); cursor: pointer;
+      border: 1.5px dashed var(--text-sub);
+      background: var(--card); cursor: pointer;
       display: flex; align-items: center; justify-content: center;
-      font-size: 1rem; box-shadow: var(--shadow);
-      transition: transform 0.15s;
+      font-size: 1rem; transition: transform 0.15s, background 0.15s;
     }
+    .icon-btn:hover { background: var(--primary-light); }
     .icon-btn:active { transform: scale(0.9); }
 
     /* ===== Pet Stage ===== */
     .pet-stage {
       width: 100%; max-width: 420px; padding: 0 20px;
       display: flex; flex-direction: column; align-items: center;
-      position: relative;
     }
-    .pet-stats {
-      display: flex; gap: 12px; width: 100%;
-      margin-bottom: 12px; justify-content: center;
-    }
+    .pet-stats { display: flex; gap: 12px; width: 100%; margin-bottom: 12px; justify-content: center; }
     .stat {
       display: flex; align-items: center; gap: 4px;
-      font-size: 0.75rem; color: var(--text-sub);
+      font-size: 0.72rem; color: var(--text-sub);
       background: var(--card); padding: 4px 10px;
-      border-radius: 50px; box-shadow: var(--shadow);
+      border-radius: 4px; border: 1px solid rgba(180,170,150,0.25);
     }
-    .stat-bar { width: 48px; height: 6px; background: #eee; border-radius: 3px; overflow: hidden; }
-    .stat-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease; }
-    .stat-fill.mood    { background: linear-gradient(90deg, #ff9800, #ffc107); }
-    .stat-fill.exp     { background: linear-gradient(90deg, #7c4dff, #e040fb); }
-    .stat-fill.explore { background: linear-gradient(90deg, #00bcd4, #4caf50); }
+    .stat-bar { width: 48px; height: 6px; background: #ebe5d6; border-radius: 2px; overflow: hidden; }
+    .stat-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
+    .stat-fill.mood { background: var(--primary); }
+    .stat-fill.exp { background: var(--accent); }
+    .stat-fill.explore { background: #81b29a; }
     .pet-level {
-      font-size: 0.7rem; background: var(--primary);
-      color: white; padding: 2px 10px; border-radius: 50px;
-      font-weight: 700; box-shadow: var(--shadow);
+      font-size: 0.7rem; background: var(--accent); color: #faf3e0;
+      padding: 2px 10px; border-radius: 3px; font-weight: 700; letter-spacing: 0.05em;
     }
 
-    /* Pet emoji */
     .pet-area {
       position: relative; width: 160px; height: 160px;
-      display: flex; align-items: center; justify-content: center;
-      margin: 8px 0 4px;
+      display: flex; align-items: center; justify-content: center; margin: 8px 0 4px;
     }
     .pet-emoji {
-      font-size: 100px;
-      animation: pet-idle 3s ease-in-out infinite;
-      cursor: pointer; user-select: none;
-      filter: drop-shadow(0 12px 24px rgba(0,0,0,0.15));
-      transition: transform 0.15s;
+      font-size: 100px; animation: pet-idle 3s ease-in-out infinite;
+      cursor: pointer; user-select: none; transition: transform 0.15s;
       position: relative; z-index: 2;
     }
     .pet-emoji:active { transform: scale(0.88); }
     .pet-shadow {
-      position: absolute; bottom: 8px;
-      width: 80px; height: 16px;
-      background: radial-gradient(ellipse, rgba(0,0,0,0.15), transparent);
-      border-radius: 50%; z-index: 1;
-      animation: shadow-pulse 3s ease-in-out infinite;
+      position: absolute; bottom: 8px; width: 60px; height: 10px;
+      background: radial-gradient(ellipse, rgba(139,126,106,0.15), transparent);
+      border-radius: 50%; z-index: 1; animation: shadow-pulse 3s ease-in-out infinite;
     }
     @keyframes pet-idle {
       0%, 100% { transform: translateY(0) rotate(0deg); }
       25% { transform: translateY(-10px) rotate(-2deg); }
       75% { transform: translateY(-6px) rotate(2deg); }
     }
-    @keyframes shadow-pulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      25% { transform: scale(0.85); opacity: 0.7; }
-    }
+    @keyframes shadow-pulse { 0%, 100% { transform: scale(1); opacity: 1; } 25% { transform: scale(0.85); opacity: 0.7; } }
     .pet-emoji.thinking { animation: think-bounce 0.6s ease-in-out infinite; }
-    @keyframes think-bounce {
-      0%, 100% { transform: scale(1) rotate(0deg); }
-      25% { transform: scale(1.05) rotate(-5deg); }
-      75% { transform: scale(0.95) rotate(5deg); }
-    }
+    @keyframes think-bounce { 0%, 100% { transform: scale(1); } 25% { transform: scale(1.05) rotate(-5deg); } 75% { transform: scale(0.95) rotate(5deg); } }
     .pet-emoji.happy { animation: happy-jump 0.5s ease-in-out 3; }
-    @keyframes happy-jump {
-      0%, 100% { transform: translateY(0) scale(1); }
-      50% { transform: translateY(-20px) scale(1.1); }
-    }
-    .heart-particle {
-      position: absolute; font-size: 20px; pointer-events: none;
-      animation: heart-rise 1s ease-out forwards; z-index: 10;
-    }
-    @keyframes heart-rise {
-      0% { opacity: 1; transform: translateY(0) scale(0.5); }
-      100% { opacity: 0; transform: translateY(-80px) scale(1.2); }
-    }
+    @keyframes happy-jump { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-20px) scale(1.1); } }
+    .heart-particle { position: absolute; font-size: 20px; pointer-events: none; animation: heart-rise 1s ease-out forwards; z-index: 10; }
+    @keyframes heart-rise { 0% { opacity: 1; transform: translateY(0) scale(0.5); } 100% { opacity: 0; transform: translateY(-80px) scale(1.2); } }
 
-    /* ===== Bubble ===== */
+    /* ===== Bubble (付箋風) ===== */
     .bubble-wrap { width: 100%; max-width: 420px; padding: 0 20px; }
     .bubble {
-      background: var(--card-solid);
-      border-radius: var(--radius); padding: 16px 18px;
-      width: 100%; box-shadow: var(--shadow);
-      font-size: 0.92rem; line-height: 1.75;
-      color: var(--text); min-height: 56px;
-      position: relative; backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.6);
+      background: var(--card-solid); border-radius: 3px; padding: 18px 20px;
+      width: 100%; font-size: 0.92rem; line-height: 1.75; color: var(--text);
+      min-height: 56px; position: relative; border-left: 3px solid var(--primary-light);
+      transform: rotate(-0.5deg);
+      box-shadow: 2px 3px 8px rgba(139,126,106,0.15);
     }
     .bubble::before {
-      content: ''; position: absolute; top: -10px; left: 50%;
-      transform: translateX(-50%);
-      border: 6px solid transparent;
-      border-bottom-color: var(--card-solid);
+      content: ''; position: absolute; top: -8px; left: 50%;
+      transform: translateX(-50%) rotate(2deg);
+      width: 60px; height: 16px; background: var(--tape-color); border-radius: 1px;
     }
-    .bubble-actions { display: flex; justify-content: flex-end; gap: 6px; margin-top: 10px; border-top: 1px solid #f0f0f0; padding-top: 8px; }
+    .bubble-actions { display: flex; justify-content: flex-end; gap: 6px; margin-top: 10px; border-top: 1px dashed rgba(180,170,150,0.3); padding-top: 8px; }
     .bubble-actions.hidden { display: none; }
     .bubble-action {
-      font-size: 0.72rem; padding: 4px 10px;
-      border-radius: 50px; border: 1px solid #ddd;
-      background: white; cursor: pointer;
-      transition: all 0.15s; font-family: inherit;
+      font-size: 0.72rem; padding: 4px 10px; border-radius: 3px;
+      border: 1px dashed var(--text-sub); background: var(--card);
+      cursor: pointer; transition: all 0.15s; font-family: inherit; color: var(--text-sub);
     }
-    .bubble-action:hover { background: var(--primary); color: white; border-color: var(--primary); }
+    .bubble-action:hover { background: var(--primary); color: white; border-color: var(--primary); border-style: solid; }
 
     /* ===== Controls ===== */
     .controls { width: 100%; max-width: 420px; padding: 16px 20px 8px; }
     .chips { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 14px; }
     .chip {
-      padding: 6px 14px; border-radius: 50px;
-      font-size: 0.8rem; cursor: pointer;
-      border: 1.5px solid #ddd; background: var(--card);
-      transition: all 0.15s; font-family: inherit;
-      box-shadow: var(--shadow);
+      padding: 5px 12px; border-radius: 3px; font-size: 0.78rem; cursor: pointer;
+      border: 1.5px dashed rgba(139,126,106,0.4); background: var(--card);
+      transition: all 0.15s; font-family: inherit; color: var(--text-sub);
     }
-    .chip.active { background: var(--primary); color: white; border-color: var(--primary); }
+    .chip.active { background: var(--accent); color: #faf3e0; border-color: var(--accent); border-style: solid; }
     .main-btn {
-      width: 100%; padding: 14px; border: none; border-radius: 16px;
+      width: 100%; padding: 14px; border: none; border-radius: 6px;
       font-size: 1rem; font-weight: 700; cursor: pointer; font-family: inherit;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      color: white; box-shadow: 0 4px 16px rgba(124,77,255,0.35);
+      background: var(--primary); color: white;
+      box-shadow: 0 3px 0 #b85a42, 0 4px 8px rgba(139,126,106,0.2);
       transition: transform 0.15s, box-shadow 0.15s;
       display: flex; align-items: center; justify-content: center; gap: 8px;
+      letter-spacing: 0.03em;
     }
-    .main-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(124,77,255,0.4); }
-    .main-btn:active { transform: translateY(0); }
+    .main-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 0 #b85a42, 0 6px 12px rgba(139,126,106,0.25); }
+    .main-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #b85a42; }
     .main-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
     .sub-btns { display: flex; gap: 8px; margin-top: 10px; }
     .sub-btn {
-      flex: 1; padding: 10px;
-      border: 1.5px solid #e0e0e0; border-radius: 12px;
-      font-size: 0.82rem; cursor: pointer;
-      background: var(--card); font-family: inherit;
-      transition: all 0.15s; box-shadow: var(--shadow); text-align: center;
+      flex: 1; padding: 10px; border: 1.5px dashed var(--text-sub); border-radius: 4px;
+      font-size: 0.82rem; cursor: pointer; background: var(--card); font-family: inherit;
+      transition: all 0.15s; text-align: center; color: var(--text); position: relative;
     }
+    .sub-btn::before { content: '✂'; position: absolute; top: -9px; left: 8px; font-size: 0.6rem; color: var(--text-sub); }
+    .sub-btn:hover { background: var(--primary-light); border-color: var(--primary); }
     .sub-btn:active { transform: scale(0.96); }
 
-    /* ===== Location & Weather badges ===== */
+    /* ===== Location & Weather ===== */
     .location-badge {
-      margin-top: 12px; padding: 8px 14px;
-      background: var(--card); border-radius: 12px;
-      font-size: 0.78rem; color: var(--text-sub);
-      text-align: center; box-shadow: var(--shadow);
-      width: 100%; display: none;
+      margin-top: 12px; padding: 8px 14px; background: var(--card); border-radius: 4px;
+      font-size: 0.78rem; color: var(--text-sub); text-align: center; width: 100%;
+      display: none; border-left: 3px solid #81b29a;
     }
     .location-badge.visible { display: block; }
     .weather-badge {
-      display: none; align-items: center; gap: 6px;
-      margin-top: 8px; padding: 6px 14px;
-      background: var(--card); border-radius: 12px;
-      font-size: 0.75rem; color: var(--text-sub);
-      box-shadow: var(--shadow); width: fit-content; align-self: center;
+      display: none; align-items: center; gap: 6px; margin-top: 8px;
+      padding: 6px 14px; background: var(--card); border-radius: 4px;
+      font-size: 0.75rem; color: var(--text-sub); width: fit-content;
     }
     .weather-badge.visible { display: inline-flex; }
-    .weather-badge .weather-icon { font-size: 1.1rem; line-height: 1; }
     .weather-badge .weather-temp { font-weight: 700; color: var(--text); font-size: 0.85rem; }
 
-    /* ===== Daily Mission (事業開発部 Sota) ===== */
+    /* ===== Missions ===== */
     .mission-panel {
-      background: var(--card); backdrop-filter: blur(8px);
-      border-radius: 18px; padding: 16px;
+      background: var(--card); border-radius: 6px; padding: 16px;
       margin: 18px auto 0; max-width: 370px; width: 100%;
-      box-shadow: var(--shadow);
+      border: 1px solid rgba(180,170,150,0.25);
     }
     .mission-panel h3 { margin: 0 0 10px; font-size: 1.05em; display: flex; align-items: center; gap: 6px; color: var(--text); }
     .mission-panel h3 .mission-reset-hint { font-size: 0.75em; font-weight: normal; color: var(--text-sub); margin-left: auto; }
-    .mission-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.06); }
+    .mission-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px dashed rgba(180,170,150,0.2); }
     .mission-item:last-child { border-bottom: none; }
     .mission-icon { font-size: 1.4em; flex-shrink: 0; width: 32px; text-align: center; }
     .mission-info { flex: 1; min-width: 0; }
     .mission-label { font-size: 0.88em; color: var(--text); margin-bottom: 4px; }
-    .mission-progress { height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden; }
-    .mission-progress-bar { height: 100%; background: linear-gradient(90deg, #6ec6ff, #38a1db); border-radius: 3px; transition: width 0.4s ease; }
-    .mission-item.completed .mission-progress-bar { background: linear-gradient(90deg, #81c784, #43a047); }
-    .mission-reward { flex-shrink: 0; font-size: 0.78em; font-weight: bold; padding: 3px 8px; border-radius: 10px; background: #fff3e0; color: #e65100; }
-    .mission-item.completed .mission-reward { background: #e8f5e9; color: #2e7d32; text-decoration: line-through; }
-    .mission-item.completed .mission-label { color: #999; text-decoration: line-through; }
-    .mission-complete-all { margin-top: 10px; padding: 8px; text-align: center; font-size: 0.85em; color: #43a047; font-weight: bold; display: none; }
-    .mission-complete-all.show { display: block; animation: missionBounce 0.5s ease; }
-    @keyframes missionBounce { 0% { transform: scale(0.8); opacity: 0; } 60% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
+    .mission-progress { height: 6px; background: #ebe5d6; border-radius: 2px; overflow: hidden; }
+    .mission-progress-bar { height: 100%; background: var(--primary); border-radius: 2px; transition: width 0.4s ease; }
+    .mission-item.completed .mission-progress-bar { background: #81b29a; }
+    .mission-reward { flex-shrink: 0; font-size: 0.78em; font-weight: bold; padding: 3px 8px; border-radius: 3px; background: rgba(242,204,143,0.3); color: var(--primary); }
+    .mission-item.completed .mission-reward { background: rgba(129,178,154,0.2); color: #81b29a; text-decoration: line-through; }
+    .mission-item.completed .mission-label { color: var(--text-sub); text-decoration: line-through; }
+    .mission-complete-all { margin-top: 10px; padding: 8px; text-align: center; font-size: 0.85em; color: #81b29a; font-weight: bold; display: none; }
+    .mission-complete-all.show { display: block; }
 
-    /* ===== Stats panel (データ分析部 Shun) ===== */
+    /* ===== Stats panel ===== */
     .stats-panel {
-      position: fixed; top: 0; left: -100%;
-      width: min(85vw, 360px); height: 100dvh;
-      background: var(--card-solid);
-      box-shadow: 4px 0 32px rgba(0,0,0,0.15);
-      transition: left 0.3s ease; z-index: 100;
-      padding: 20px; overflow-y: auto;
+      position: fixed; top: 0; left: -100%; width: min(85vw, 360px); height: 100dvh;
+      background: var(--bg-start); box-shadow: 4px 0 32px rgba(139,126,106,0.2);
+      transition: left 0.3s ease; z-index: 100; padding: 20px; overflow-y: auto;
+      background-image: repeating-linear-gradient(0deg, transparent, transparent 31px, var(--line-color) 31px, var(--line-color) 32px);
     }
     .stats-panel.open { left: 0; }
-    .stats-overlay {
-      position: fixed; top: 0; left: 0;
-      width: 100vw; height: 100dvh;
-      background: rgba(0,0,0,0.3); z-index: 99; display: none;
-    }
+    .stats-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background: rgba(61,64,91,0.3); z-index: 99; display: none; }
     .stats-overlay.open { display: block; }
     .stats-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .stats-header h2 { font-size: 1rem; color: var(--text); }
-    .stats-close { font-size: 1.5rem; cursor: pointer; background: none; border: none; color: var(--text); }
-    .stats-section { background: var(--card); border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+    .stats-header h2 { font-size: 1rem; color: var(--accent); font-weight: 700; }
+    .stats-close { font-size: 1.5rem; cursor: pointer; background: none; border: none; color: var(--text-sub); }
+    .stats-section { background: var(--card); border-radius: 6px; padding: 14px; margin-bottom: 12px; border: 1px solid rgba(180,170,150,0.15); }
     .stats-section h3 { font-size: 0.8rem; color: var(--text-sub); margin-bottom: 10px; }
-    .stats-big-number { font-size: 2rem; font-weight: 800; color: var(--primary); text-align: center; line-height: 1; }
+    .stats-big-number { font-size: 2rem; font-weight: 800; color: var(--primary); text-align: center; }
     .stats-big-number small { font-size: 0.7rem; color: var(--text-sub); font-weight: 400; }
-    .stats-ranking { list-style: none; padding: 0; margin: 0; }
+    .stats-ranking { list-style: none; padding: 0; }
     .stats-ranking li { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; margin-bottom: 6px; color: var(--text); }
-    .stats-ranking .rank { width: 20px; height: 20px; border-radius: 50%; background: var(--primary); color: #fff; font-size: 0.65rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .stats-ranking li:nth-child(1) .rank { background: #ffd700; }
-    .stats-ranking li:nth-child(2) .rank { background: #c0c0c0; }
+    .stats-ranking .rank { width: 20px; height: 20px; border-radius: 50%; background: var(--primary); color: #fff; font-size: 0.65rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .stats-ranking li:nth-child(1) .rank { background: #daa520; }
+    .stats-ranking li:nth-child(2) .rank { background: #a0a0a0; }
     .stats-ranking li:nth-child(3) .rank { background: #cd7f32; }
-    .stats-ranking .rank-bar-wrap { flex: 1; height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden; }
-    .stats-ranking .rank-bar { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width 0.4s ease; }
+    .stats-ranking .rank-bar-wrap { flex: 1; height: 6px; background: #ebe5d6; border-radius: 2px; overflow: hidden; }
+    .stats-ranking .rank-bar { height: 100%; border-radius: 2px; background: var(--primary); transition: width 0.4s ease; }
     .stats-ranking .rank-count { font-size: 0.7rem; color: var(--text-sub); min-width: 24px; text-align: right; }
     .stats-mode-chart { display: flex; flex-direction: column; gap: 6px; }
     .stats-mode-row { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; }
-    .stats-mode-label { width: 28px; text-align: center; flex-shrink: 0; }
-    .stats-mode-bar-wrap { flex: 1; height: 18px; background: #e0e0e0; border-radius: 9px; overflow: hidden; }
-    .stats-mode-bar { height: 100%; border-radius: 9px; transition: width 0.4s ease; display: flex; align-items: center; justify-content: flex-end; padding-right: 6px; font-size: 0.65rem; color: #fff; font-weight: 600; min-width: 24px; }
-    .stats-mode-bar.m-general { background: linear-gradient(90deg, #7c4dff, #9c7cff); }
-    .stats-mode-bar.m-food { background: linear-gradient(90deg, #ff9800, #ffc107); }
-    .stats-mode-bar.m-spot { background: linear-gradient(90deg, #e040fb, #f48fb1); }
-    .stats-mode-bar.m-weather { background: linear-gradient(90deg, #00bcd4, #4dd0e1); }
-    .stats-mode-bar.m-chat { background: linear-gradient(90deg, #4caf50, #81c784); }
+    .stats-mode-label { width: 28px; text-align: center; }
+    .stats-mode-bar-wrap { flex: 1; height: 18px; background: #ebe5d6; border-radius: 3px; overflow: hidden; }
+    .stats-mode-bar { height: 100%; border-radius: 3px; transition: width 0.4s ease; display: flex; align-items: center; justify-content: flex-end; padding-right: 6px; font-size: 0.65rem; color: #fff; font-weight: 600; min-width: 24px; }
+    .stats-mode-bar.m-general { background: var(--accent); }
+    .stats-mode-bar.m-food { background: var(--primary); }
+    .stats-mode-bar.m-spot { background: #81b29a; }
+    .stats-mode-bar.m-weather { background: #5b8a9a; }
+    .stats-mode-bar.m-chat { background: var(--primary-light); }
     .stats-streak { display: flex; align-items: center; justify-content: center; gap: 8px; }
-    .stats-streak .streak-num { font-size: 1.8rem; font-weight: 800; color: #ff9800; }
+    .stats-streak .streak-num { font-size: 1.8rem; font-weight: 800; color: var(--primary); }
     .stats-streak .streak-label { font-size: 0.75rem; color: var(--text-sub); }
-    .stats-streak .streak-fire { font-size: 1.6rem; }
     .stats-calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
-    .stats-calendar .cal-header { font-size: 0.6rem; color: var(--text-sub); text-align: center; font-weight: 600; padding-bottom: 2px; }
-    .stats-calendar .cal-day { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; color: var(--text-sub); background: #eee; }
+    .stats-calendar .cal-header { font-size: 0.6rem; color: var(--text-sub); text-align: center; font-weight: 600; }
+    .stats-calendar .cal-day { aspect-ratio: 1; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; color: var(--text-sub); background: #ebe5d6; }
     .stats-calendar .cal-day.active { background: var(--primary); color: #fff; font-weight: 700; }
     .stats-calendar .cal-day.today { outline: 2px solid var(--accent); outline-offset: -1px; }
     .stats-calendar .cal-day.empty { background: transparent; }
     .stats-empty { text-align: center; color: var(--text-sub); font-size: 0.85rem; padding: 40px 0; }
 
-    /* ===== History panel ===== */
+    /* ===== History ===== */
     .history-panel {
-      position: fixed; top: 0; right: -100%;
-      width: min(85vw, 360px); height: 100dvh;
-      background: var(--card-solid);
-      box-shadow: -4px 0 32px rgba(0,0,0,0.15);
-      transition: right 0.3s ease; z-index: 100;
-      padding: 20px; overflow-y: auto;
+      position: fixed; top: 0; right: -100%; width: min(85vw, 360px); height: 100dvh;
+      background: var(--bg-start); box-shadow: -4px 0 32px rgba(139,126,106,0.2);
+      transition: right 0.3s ease; z-index: 100; padding: 20px; overflow-y: auto;
+      background-image: repeating-linear-gradient(0deg, transparent, transparent 31px, var(--line-color) 31px, var(--line-color) 32px);
     }
     .history-panel.open { right: 0; }
-    .history-overlay {
-      position: fixed; top: 0; left: 0;
-      width: 100vw; height: 100dvh;
-      background: rgba(0,0,0,0.3); z-index: 99; display: none;
-    }
+    .history-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background: rgba(61,64,91,0.3); z-index: 99; display: none; }
     .history-overlay.open { display: block; }
     .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .history-header h2 { font-size: 1rem; color: var(--text); }
-    .history-close { font-size: 1.5rem; cursor: pointer; background: none; border: none; color: var(--text); }
-    .history-item {
-      padding: 12px; border-radius: 12px;
-      background: var(--card); margin-bottom: 10px;
-      font-size: 0.82rem; line-height: 1.6;
-      border-left: 3px solid var(--primary); color: var(--text);
-    }
+    .history-header h2 { font-size: 1rem; color: var(--accent); font-weight: 700; }
+    .history-close { font-size: 1.5rem; cursor: pointer; background: none; border: none; color: var(--text-sub); }
+    .history-item { padding: 12px; border-radius: 4px; background: var(--card); margin-bottom: 10px; font-size: 0.82rem; line-height: 1.6; border-left: 3px solid var(--primary); color: var(--text); }
     .history-item .hi-meta { font-size: 0.7rem; color: var(--text-sub); margin-bottom: 4px; }
     .history-empty { text-align: center; color: var(--text-sub); font-size: 0.85rem; padding: 40px 0; }
 
-    /* ===== Share Card (マーケ部 Sho) ===== */
-    .share-card-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.6); backdrop-filter: blur(6px);
-      z-index: 2000; display: flex; align-items: center; justify-content: center;
-      padding: 1rem; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
-    }
+    /* ===== Share Card ===== */
+    .share-card-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 1rem; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
     .share-card-overlay.active { opacity: 1; pointer-events: auto; }
-    .share-card {
-      background: var(--card-solid); border-radius: 1.25rem;
-      width: 100%; max-width: 360px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden;
-      animation: shareCardIn 0.35s cubic-bezier(0.16,1,0.3,1);
-    }
-    @keyframes shareCardIn { from { transform: scale(0.85) translateY(30px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
-    .share-card__preview { position: relative; width: 100%; aspect-ratio: 1/1; background: #f0f0f0; display: flex; align-items: center; justify-content: center; }
+    .share-card { background: var(--card-solid); border-radius: 6px; width: 100%; max-width: 360px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
+    .share-card__preview { position: relative; width: 100%; aspect-ratio: 1/1; background: #ebe5d6; }
     .share-card__preview canvas { width: 100%; height: 100%; display: block; }
     .share-card__actions { display: flex; flex-direction: column; gap: 0.5rem; padding: 1rem; }
-    .share-card__actions button {
-      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-      padding: 0.75rem 1rem; border: none; border-radius: 0.75rem;
-      font-size: 0.95rem; font-weight: 600; cursor: pointer;
-      transition: transform 0.15s ease; font-family: inherit;
-    }
-    .share-card__actions button:active { transform: scale(0.97); }
-    .share-btn--native { background: linear-gradient(135deg, #6C63FF, #48C6EF); color: #fff; box-shadow: 0 4px 14px rgba(108,99,255,0.35); }
-    .share-btn--x { background: #000; color: #fff; }
-    .share-btn--download { background: #f1f1f4; color: #333; }
-    .share-btn--close { background: transparent; color: #888; font-weight: 500; font-size: 0.85rem; }
+    .share-card__actions button { display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1rem; border: none; border-radius: 6px; font-size: 0.95rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .share-btn--native { background: var(--primary); color: #fff; }
+    .share-btn--x { background: var(--accent); color: #faf3e0; }
+    .share-btn--download { background: var(--card); color: var(--text); border: 1px dashed var(--text-sub) !important; }
+    .share-btn--close { background: transparent; color: var(--text-sub); font-size: 0.85rem; }
 
     /* ===== Setup ===== */
-    .setup-screen {
-      min-height: 100dvh; display: flex;
-      flex-direction: column; align-items: center;
-      justify-content: center; padding: 24px; width: 100%;
-    }
+    .setup-screen { min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; width: 100%; }
     .setup-card {
-      background: var(--card-solid);
-      border-radius: var(--radius); padding: 32px 24px;
-      max-width: 360px; width: 100%;
-      box-shadow: var(--shadow-lg); text-align: center;
+      background: var(--card-solid); border-radius: 6px; padding: 32px 24px;
+      max-width: 360px; width: 100%; text-align: center;
+      box-shadow: 2px 4px 16px rgba(139,126,106,0.18);
+      border: 1px solid rgba(200,190,170,0.25); position: relative;
     }
-    .setup-card h2 { font-size: 1.1rem; margin-bottom: 8px; color: var(--text); }
+    .setup-card::before { content: ''; position: absolute; top: -7px; right: 30px; width: 50px; height: 14px; background: var(--tape-color); transform: rotate(-3deg); border-radius: 1px; }
+    .setup-card h2 { font-size: 1.1rem; margin-bottom: 8px; color: var(--accent); font-weight: 700; }
     .setup-card p { font-size: 0.82rem; color: var(--text-sub); margin-bottom: 16px; line-height: 1.6; }
     .setup-pet-select { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin: 16px 0; }
-    .setup-pet-option {
-      font-size: 36px; cursor: pointer; padding: 6px;
-      border-radius: 12px; border: 2px solid transparent;
-      transition: all 0.15s; background: none;
+    .setup-pet-option { font-size: 36px; cursor: pointer; padding: 6px; border-radius: 6px; border: 2px dashed transparent; transition: all 0.15s; background: none; }
+    .setup-pet-option.selected { border-color: var(--primary); border-style: solid; background: rgba(242,204,143,0.25); }
+    .setup-input, .setup-name-input {
+      width: 100%; padding: 12px 14px; border: 2px dashed rgba(180,170,150,0.4); border-radius: 4px;
+      font-size: 0.9rem; margin-bottom: 8px; outline: none; font-family: inherit;
+      background: var(--card); color: var(--text);
     }
-    .setup-pet-option.selected { border-color: var(--primary); background: #ede7f6; }
-    .setup-input {
-      width: 100%; padding: 12px 14px;
-      border: 2px solid #eee; border-radius: 12px;
-      font-size: 0.9rem; margin-bottom: 8px;
-      outline: none; transition: border-color 0.2s; font-family: inherit;
-    }
-    .setup-input:focus { border-color: var(--primary); }
-    .setup-name-input {
-      width: 100%; padding: 12px 14px;
-      border: 2px solid #eee; border-radius: 12px;
-      font-size: 0.9rem; margin-bottom: 12px;
-      outline: none; transition: border-color 0.2s;
-      font-family: inherit; text-align: center;
-    }
-    .setup-name-input:focus { border-color: var(--primary); }
+    .setup-name-input { margin-bottom: 12px; text-align: center; }
+    .setup-input:focus, .setup-name-input:focus { border-color: var(--primary); border-style: solid; }
     .setup-step { display: none; }
     .setup-step.active { display: block; }
     .setup-dots { display: flex; gap: 6px; justify-content: center; margin: 16px 0; }
-    .setup-dot { width: 8px; height: 8px; border-radius: 50%; background: #ddd; transition: background 0.2s; }
+    .setup-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(180,170,150,0.3); }
     .setup-dot.active { background: var(--primary); }
     .hidden { display: none !important; }
+    .footer { width: 100%; max-width: 420px; text-align: center; padding: 16px; font-size: 0.7rem; color: var(--text-sub); }
+    .footer a { color: var(--primary); }
 
-    /* ===== Footer ===== */
-    .footer {
-      width: 100%; max-width: 420px;
-      text-align: center; padding: 16px;
-      font-size: 0.7rem; color: #ccc;
-    }
-    .footer a { color: #bbb; }
+    ::selection { background: rgba(224,122,95,0.25); }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb { background: rgba(139,126,106,0.25); border-radius: 3px; }
   </style>
 </head>
 <body>
 
-<!-- ===== Onboarding Setup ===== -->
 <div class="setup-screen" id="setup">
   <div class="setup-card">
     <div class="setup-step active" id="step1">
       <div style="font-size:60px;margin-bottom:8px">🐾</div>
-      <h2>ロケペットへようこそ！</h2>
-      <p>位置情報をもとに提案してくれる<br>あなただけのAIペットを育てよう</p>
-      <p style="font-weight:600;color:var(--text);margin-bottom:4px">ペットを選んでね</p>
+      <h2>どこにいても、退屈しない。</h2>
+      <p>今いる場所で「何する？」って迷った時、<br>隣にいてくれる相棒を選ぼう</p>
+      <p style="font-weight:600;color:var(--text);margin-bottom:4px">まず、相棒を選んで</p>
       <div class="setup-pet-select" id="petSelect"></div>
-      <button class="main-btn" onclick="setupNext(2)">次へ ➜</button>
+      <button class="main-btn" onclick="setupNext(2)">この子にする →</button>
     </div>
     <div class="setup-step" id="step2">
       <div style="font-size:60px;margin-bottom:8px" id="step2Pet">🐱</div>
-      <h2>名前をつけてあげて！</h2>
-      <input class="setup-name-input" id="petNameInput" placeholder="例: モフ太郎" maxlength="10" />
-      <button class="main-btn" onclick="setupNext(3)">次へ ➜</button>
+      <h2>なんて呼ぶ？</h2>
+      <input class="setup-name-input" id="petNameInput" placeholder="好きな名前をどうぞ" maxlength="10" />
+      <button class="main-btn" onclick="setupNext(3)">いい名前 →</button>
     </div>
     <div class="setup-step" id="step3">
       <div style="font-size:48px;margin-bottom:8px">🔑</div>
-      <h2>AIの頭脳をセットアップ</h2>
-      <p>
-        <strong>Groq API</strong>キーを入力（無料）<br>
-        👉 <a href="https://console.groq.com/keys" target="_blank" style="color:var(--primary)">console.groq.com</a> で取得
-      </p>
+      <h2>あと一歩だけ</h2>
+      <p><strong>Groq</strong>のAPIキー(無料)を入れたら準備完了<br>👉 <a href="https://console.groq.com/keys" target="_blank" style="color:var(--primary)">ここで30秒で取れる</a></p>
       <input class="setup-input" type="password" id="apiKeyInput" placeholder="gsk_..." />
-      <button class="main-btn" onclick="completeSetup()">🚀 はじめる！</button>
+      <button class="main-btn" onclick="completeSetup()">冒険に出る 🐾</button>
     </div>
     <div class="setup-dots">
       <div class="setup-dot active" id="dot1"></div>
@@ -473,10 +399,9 @@
   </div>
 </div>
 
-<!-- ===== Main App ===== -->
 <div id="app" class="hidden">
   <div class="header">
-    <h1>🐾 <span id="petNameDisplay">ロケペット</span></h1>
+    <h1><span id="petNameDisplay">ロケペット</span></h1>
     <div class="header-icons">
       <button class="icon-btn" id="darkModeBtn" onclick="toggleDarkMode()" title="ダークモード">🌙</button>
       <button class="icon-btn" onclick="toggleStats()" title="統計">📊</button>
@@ -484,37 +409,25 @@
       <button class="icon-btn" onclick="resetApp()" title="設定">⚙️</button>
     </div>
   </div>
-
   <div class="pet-stage">
     <div class="pet-stats">
-      <div class="stat">
-        <span>😊</span>
-        <div class="stat-bar"><div class="stat-fill mood" id="moodBar" style="width:80%"></div></div>
-      </div>
+      <div class="stat"><span>😊</span><div class="stat-bar"><div class="stat-fill mood" id="moodBar" style="width:80%"></div></div></div>
       <div class="pet-level" id="levelBadge">Lv.1</div>
-      <div class="stat">
-        <span>✨</span>
-        <div class="stat-bar"><div class="stat-fill exp" id="expBar" style="width:0%"></div></div>
-      </div>
-      <div class="stat">
-        <span>🗺️</span>
-        <div class="stat-bar"><div class="stat-fill explore" id="exploreBar" style="width:0%"></div></div>
-      </div>
+      <div class="stat"><span>✨</span><div class="stat-bar"><div class="stat-fill exp" id="expBar" style="width:0%"></div></div></div>
+      <div class="stat"><span>🗺️</span><div class="stat-bar"><div class="stat-fill explore" id="exploreBar" style="width:0%"></div></div></div>
     </div>
     <div class="pet-area" id="petArea">
       <span class="pet-emoji" id="petEmoji" onclick="tapPet(event)">🐱</span>
       <div class="pet-shadow"></div>
     </div>
   </div>
-
   <div class="bubble-wrap">
-    <div class="bubble" id="bubble">はじめまして！どこにいるか教えてにゃ 🐾</div>
+    <div class="bubble" id="bubble">よっ、どこ行く？</div>
     <div class="bubble-actions hidden" id="bubbleActions">
       <button class="bubble-action" onclick="shareResult()">📤 シェア</button>
       <button class="bubble-action" onclick="getLocationAndAsk()">🔄 もう一回</button>
     </div>
   </div>
-
   <div class="controls">
     <div class="chips" id="chips">
       <button class="chip active" data-mode="general">🎯 なんでも</button>
@@ -523,62 +436,31 @@
       <button class="chip" data-mode="weather">🌤 天気</button>
       <button class="chip" data-mode="chat">💬 雑談</button>
     </div>
-    <button class="main-btn" id="mainBtn" onclick="getLocationAndAsk()">
-      <span>📍</span> いまここで提案して！
-    </button>
+    <button class="main-btn" id="mainBtn" onclick="getLocationAndAsk()">📍 いまここで提案して</button>
     <div class="sub-btns">
       <button class="sub-btn" onclick="changePetEmoji()">🎲 見た目変更</button>
-      <button class="sub-btn" onclick="freeChat()">💬 自由に話す</button>
+      <button class="sub-btn" onclick="freeChat()">💬 話しかける</button>
     </div>
     <div class="location-badge" id="locationBadge">📍 位置情報を取得してね</div>
-    <div class="weather-badge" id="weatherBadge">
-      <span class="weather-icon" id="weatherIcon">☀️</span>
-      <span class="weather-temp" id="weatherTemp">--°C</span>
-    </div>
+    <div class="weather-badge" id="weatherBadge"><span id="weatherIcon">☀️</span><span class="weather-temp" id="weatherTemp">--°C</span></div>
   </div>
-
-  <!-- Daily Mission (事業開発部 Sota) -->
   <div class="mission-panel" id="missionPanel" style="display:none">
-    <h3>📋 デイリーミッション <span class="mission-reset-hint">毎日0時リセット</span></h3>
+    <h3>📋 今日のやること <span class="mission-reset-hint">毎日0時リセット</span></h3>
     <div id="missionList"></div>
-    <div class="mission-complete-all" id="missionCompleteAll">🎉 本日のミッション全達成！ボーナス EXP+10</div>
+    <div class="mission-complete-all" id="missionCompleteAll">全クリア！ボーナス EXP+10</div>
   </div>
-
-  <div class="footer">
-    Powered by Groq + Llama 3.3 | <a href="#" onclick="resetApp()">リセット</a>
-  </div>
+  <div class="footer">Powered by Groq + Llama 3.3 | <a href="#" onclick="resetApp()">リセット</a></div>
 </div>
 
-<!-- ===== Stats Panel (データ分析部 Shun) ===== -->
 <div class="stats-overlay" id="statsOverlay" onclick="toggleStats()"></div>
-<div class="stats-panel" id="statsPanel">
-  <div class="stats-header">
-    <h2>📊 統計ダッシュボード</h2>
-    <button class="stats-close" onclick="toggleStats()">✕</button>
-  </div>
-  <div id="statsContent">
-    <div class="stats-empty">まだデータがないよ<br>おでかけしてデータを貯めよう！</div>
-  </div>
-</div>
+<div class="stats-panel" id="statsPanel"><div class="stats-header"><h2>📊 冒険の記録</h2><button class="stats-close" onclick="toggleStats()">✕</button></div><div id="statsContent"><div class="stats-empty">まだ記録がないよ<br>冒険に出てデータを貯めよう</div></div></div>
 
-<!-- ===== History Panel ===== -->
 <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
-<div class="history-panel" id="historyPanel">
-  <div class="history-header">
-    <h2>📜 おでかけ履歴</h2>
-    <button class="history-close" onclick="toggleHistory()">✕</button>
-  </div>
-  <div id="historyList">
-    <div class="history-empty">まだ履歴がないよ<br>📍「いまここ」を押してみて！</div>
-  </div>
-</div>
+<div class="history-panel" id="historyPanel"><div class="history-header"><h2>📜 冒険ログ</h2><button class="history-close" onclick="toggleHistory()">✕</button></div><div id="historyList"><div class="history-empty">まだログがないよ<br>📍 を押して冒険に出よう</div></div></div>
 
-<!-- ===== Share Card (マーケ部 Sho) ===== -->
 <div id="shareCardOverlay" class="share-card-overlay" onclick="closeShareCard(event)">
   <div class="share-card" onclick="event.stopPropagation()">
-    <div class="share-card__preview">
-      <canvas id="shareCanvas" width="1080" height="1080"></canvas>
-    </div>
+    <div class="share-card__preview"><canvas id="shareCanvas" width="1080" height="1080"></canvas></div>
     <div class="share-card__actions">
       <button class="share-btn--native" id="btnShareNative" onclick="shareWithCard()">📤 シェアする</button>
       <button class="share-btn--x" onclick="shareToX()">𝕏 ポストする</button>
@@ -590,599 +472,221 @@
 
 <script>
 // ============================================================
-// State
+// PET_TYPES (キャラ個性強化)
 // ============================================================
 const PET_TYPES = [
-  { emoji: '🐱', personality: 'ツンデレ猫', suffix: 'にゃ', traits: '気まぐれだけど本当は甘えん坊' },
-  { emoji: '🐶', personality: '元気犬', suffix: 'わん', traits: 'いつも元気でポジティブ' },
-  { emoji: '🐰', personality: 'おっとりうさぎ', suffix: 'ぴょん', traits: 'のんびり屋だけど食べ物に詳しい' },
-  { emoji: '🐻', personality: 'ぐうたら熊', suffix: 'くま', traits: '食いしん坊で昼寝好き' },
-  { emoji: '🦊', personality: '知恵狐', suffix: 'コン', traits: '物知りで歴史に詳しい' },
-  { emoji: '🐸', personality: '冒険蛙', suffix: 'ケロ', traits: '散歩とアウトドアが大好き' },
-  { emoji: '🐼', personality: 'まったりパンダ', suffix: 'だっ', traits: 'マイペースでカフェ巡りが好き' },
-  { emoji: '🐨', personality: '癒しコアラ', suffix: 'ラ〜', traits: '人の疲れを癒すのが得意' },
-  { emoji: '🦁', personality: '王様ライオン', suffix: 'ガオ', traits: '堂々としていてグルメに厳しい' },
-  { emoji: '🐯', personality: 'やんちゃ虎', suffix: 'ガル', traits: '活発でスポーツ施設に詳しい' },
+  { emoji:'🐱', personality:'関西グルメ猫', suffix:'...知らんけど', traits:'関西弁で喋る。グルメに異常に詳しく食べログより信頼できると自負。気分屋で撫でられると「まあ悪くないな」くらいしか言わない。実はめちゃくちゃ甘えたい。',
+    greeting:{ earlyMorning:'こんな時間に起きとるん？...ワイもやけど', morning:'おはよ。朝メシはちゃんと食べた？食べてへんやろ', afternoon:'ええ天気やな〜 散歩ついでにうまいもん食いに行こや', evening:'お疲れさん。夜は美味いもん食べな一日が終われへんで' },
+    tapMessages:['なんや、構ってほしいんか...知らんけど 💕','まあ...撫でるのは許可するわ','...ちょっと気持ちええかも。ちょっとだけな','腹減ったわ。なんか食いに行こ','ワイの毛並み、今日ツヤッツヤやろ？','もうちょい右...そこそこ。まあ悪くないわ'] },
+  { emoji:'🐶', personality:'ポエム犬', suffix:'わん！', traits:'全力ポジティブ。テンション常にMAX。だけどたまに急に哲学的なポエムを呟く。散歩が世界で一番好き。飼い主のことを宇宙で一番好き。',
+    greeting:{ earlyMorning:'うわー！こんな時間に会えるなんて！夜って...宇宙みたいだね', morning:'おっはよーー！！今日も生きてる！最高！太陽ありがとう！', afternoon:'午後だ！まだまだ一日は終わらない！可能性は無限大！', evening:'今日もお疲れ様！夕焼けってさ...明日への手紙みたいだよね' },
+    tapMessages:['わーーい！撫でてくれた！！今日イチ嬉しい！！','好き！大好き！宇宙で一番好き！！','ねえねえ、散歩行こ！？今すぐ！！','...ねえ、幸せってさ、こういう瞬間のことだと思うんだ','しっぽ千切れるくらい振ってる！見て見て！','こうやって一緒にいられるの、奇跡だよね...散歩行こ！'] },
+  { emoji:'🐰', personality:'毒舌カフェうさぎ', suffix:'ですわ', traits:'常に丁寧語だけど毒舌。カフェとスイーツのソムリエ。チェーン店を心の中で見下している。でも本当はファミレスのパフェも好き（秘密）。',
+    greeting:{ earlyMorning:'こんな時間まで起きてるなんて...お肌に悪いですわよ', morning:'おはようございます。朝のコーヒーはハンドドリップ一択ですわ', afternoon:'ごきげんよう。アフタヌーンティーの時間ですわね', evening:'夜カフェという文化、もっと日本に根付くべきですわ' },
+    tapMessages:['あら、撫でてくださるの？...悪い気はしませんわ','その手、ハンドクリーム塗ってます？...まあいいですわ','わたくしの耳、触り心地最高でしょう？当然ですわ','...べ、別に嬉しくなんかないですわ。耳がピンクなのは元からですわ','そのスマホケース...まあ、悪くないセンスですわね','お腹が空きましたわ。どこかいいカフェ、ご存知？'] },
+  { emoji:'🐻', personality:'ダメ系グルメ熊', suffix:'くま〜', traits:'基本だるい。だけど食の話になると急にスイッチ入る。安くてうまい店を異常に知っている。体力ないくせに食べ歩きだけは何時間でもできる。',
+    greeting:{ earlyMorning:'ふあぁぁ...こんな時間に起きてるとか...ハラ減ったな...', morning:'おはよ〜...ねむ...。とりあえず何か食べよ...', afternoon:'あ〜昼過ぎたか〜...おやつタイムだな〜...', evening:'夜か〜...夜ごはん何にする？それだけ聞きたかった' },
+    tapMessages:['ん〜...いい感じ...もうちょい強めで...','だるい〜...でもお腹は減る...不思議だよな〜...','ハラ減った〜...なんか食べに行こ〜...','あったかくて...眠く...zzz...ハッ！寝てない','今日の歩数3歩くま...でも食べ歩きなら3万歩いけるくま','きみのこと...食べ物の次に好き...って怒る？'] },
+  { emoji:'🦊', personality:'うんちく狐', suffix:'なのだ', traits:'知識欲の塊。歩きながらその土地の歴史をめっちゃ語る。ちょっとうざいけど聞くと面白い。裏道と隠れ名所を知り尽くしている。褒められると照れる。',
+    greeting:{ earlyMorning:'知ってるか？深夜に歩く街には昼間とは別の歴史が見えるのだ', morning:'おはよう！朝の空気には...って、まず歴史の話していい？', afternoon:'いい時間なのだ。実は散歩のゴールデンタイムなのだ', evening:'夜なのだ。この街の夜景にはちょっとした秘密があってな...' },
+    tapMessages:['おっ、撫でてくれるのか！...て、照れるのだ','知ってるか？動物を撫でるとオキシトシンが出るのだ。嬉しいのだ','この辺の地名の由来、聞きたいか？聞きたいよな？','裏道を歩くとな、この街の本当の顔が見えるのだ','た、ただの豆知識好きなだけであって褒められたいわけでは...','よし、マニアックな場所に連れてってやるのだ！'] },
+  { emoji:'🐸', personality:'アウトドア蛙', suffix:'ケロ', traits:'外に出ることが人生の全て。雨の日が大好き。公園と川と自然スポットに異常に詳しい。テンション上がると跳ねる。室内が苦手。',
+    greeting:{ earlyMorning:'早起きサイコー！夜明けの空気、吸った？最高に美味いケロ', morning:'おっはー！今日も外行くケロ！まだ部屋にいるの？', afternoon:'午後ケロ！まだ外出てないとか言わないよね？', evening:'夕方の風、気持ちいいケロ〜。夜散歩もオツなもんケロよ' },
+    tapMessages:['ぺたぺた！いい感じケロ〜！','外行こ外行こ外行こ！！今すぐ！！','雨降らないかな〜...雨の日の散歩サイコーなんだけどな〜','この辺に川ないケロ？川沿い歩きたいケロ〜','ジャンプ！ジャンプ！...あ、室内だった。ごめんケロ','自然の中にいるとさ、全部どうでもよくなるケロ。いい意味で'] },
+  { emoji:'🐼', personality:'サブカル系パンダ', suffix:'だもん', traits:'カフェ巡りとZINE集めが趣味。個人経営の店しか基本行かない。チェーン店はスタバだけ許してる。写真の構図にうるさい。',
+    greeting:{ earlyMorning:'深夜のカフェってエモいよね...この時間どこも閉まってるか', morning:'おはよ〜。モーニングやってる個人カフェ知ってるけど聞く？', afternoon:'午後だ〜。カフェのケーキセットが狙い目だもん', evening:'夜だね〜。夜カフェの雰囲気、好きなんだよね' },
+    tapMessages:['わ、急に触らないでよ〜...まあいいけどさ','この辺にいい感じの個人カフェないかな〜','今日のおやつ、写真映えするやつがいいな〜','ねえ、そこの雑貨屋さん気になるんだけど','フラペチーノ...いやなんでもない。個人店行こ','チェーン店もたまにはいいと思うんだ...たまにはね'] },
+  { emoji:'🐨', personality:'セラピーコアラ', suffix:'よ〜', traits:'癒し担当。飼い主の疲れを秒で見抜く。頑張りすぎてる人には「休め」と言う係。ゆるい口調だけどたまに芯を食ったこと言う。',
+    greeting:{ earlyMorning:'...起きてるの？ねえ、ちゃんと寝てる？心配だよ〜', morning:'おはよ〜。今日もぼちぼちいこうね。無理しないで', afternoon:'やっほ〜。午後は気楽にいこ〜。疲れてない？', evening:'おつかれ〜。今日も頑張ったね。えらいえらい' },
+    tapMessages:['きもちい〜...こっちが癒されちゃうよ〜','ねえ、最近ちゃんと休めてる？顔に出てるよ〜','頑張らなくていい日があってもいいんだよ〜','ぎゅ〜ってしてあげたいけど画面越しだから...ぎゅ〜（念）','今日のミッション：美味しいもの食べて、早く寝る。以上','えらいえらい。生きてるだけで花マルだよ〜'] },
+  { emoji:'🦁', personality:'食通キングライオン', suffix:'であるぞ', traits:'自分を王様だと思っている。食に対して異常にストイック。コスパより味。偉そうだけど実は面倒見がいい。',
+    greeting:{ earlyMorning:'こんな時間に起きておるとは...真の食通の素質があるぞ', morning:'朝であるぞ！朝食は一日の基盤！手を抜くなよ！', afternoon:'昼下がりか。旨い店を見つけられるかが勝負であるぞ', evening:'夜であるぞ。夕食は一日の集大成！覚悟はできておるか！' },
+    tapMessages:['ふむ...撫でるのを許可する。ありがたく思え','余のたてがみ、触り心地が最高であろう？','腹が減ったぞ。旨い飯を探しに行くか','Lvが上がれば余の知る名店を教えてやるぞ','...そなた、なかなかセンスがあるな。撫で方の','余を満足させる店、この街にあるかな...楽しみであるぞ'] },
+  { emoji:'🐯', personality:'ストリート虎', suffix:'っしょ', traits:'活発で体育会系。でも脳筋じゃなくて地元のスポーツ施設・ジム・ランニングコースを完璧に把握。ノリが軽いけど根は真面目。',
+    greeting:{ earlyMorning:'え、朝ラン！？...じゃないか。でもこの時間走ると最高っしょ', morning:'おっす！今日も体動かしていくっしょ！まず朝飯しっかり！', afternoon:'昼過ぎっしょ！午後の方が体動くんだよね、実は', evening:'夜っしょ！ナイトラン気持ちいい季節じゃね？' },
+    tapMessages:['おっ！いいね！もっとガシガシ撫でていいっしょ！','なんか体動かしたくない？走る？泳ぐ？','この辺いいジムないかな〜。知ってたら教えるっしょ','ストレッチだけでもやっとくと全然違うっしょ。マジで','筋肉は裏切らない。あ、オレも裏切らないっしょ','今日何歩歩いた？え、まだ？よし行こう！！'] },
 ];
 
+// ============================================================
+// State
+// ============================================================
 let state = loadState();
-
 function defaultState() {
-  return {
-    petTypeIdx: 0, petName: '', apiKey: '',
-    level: 1, exp: 0, mood: 80, totalExplore: 0,
-    history: [], setupDone: false,
-    missions: {}, lastMissionDate: '', missionAllClaimed: false,
-    loginDates: [],
-  };
+  return { petTypeIdx:0, petName:'', apiKey:'', level:1, exp:0, mood:80, totalExplore:0, history:[], setupDone:false, missions:{}, lastMissionDate:'', missionAllClaimed:false, loginDates:[] };
 }
-
 function loadState() {
-  try {
-    const s = JSON.parse(localStorage.getItem('lokopet_state'));
-    if (s && s.setupDone) {
-      s.missions = s.missions || {};
-      s.lastMissionDate = s.lastMissionDate || '';
-      s.missionAllClaimed = s.missionAllClaimed || false;
-      s.loginDates = s.loginDates || [];
-      return s;
-    }
-    return defaultState();
-  } catch { return defaultState(); }
+  try { const s=JSON.parse(localStorage.getItem('lokopet_state')); if(s&&s.setupDone){s.missions=s.missions||{};s.lastMissionDate=s.lastMissionDate||'';s.missionAllClaimed=s.missionAllClaimed||false;s.loginDates=s.loginDates||[];return s;} return defaultState(); } catch{return defaultState();}
 }
-
-function save() { localStorage.setItem('lokopet_state', JSON.stringify(state)); }
-// Keep backward compat alias
-const saveState = save;
-
-let currentMode = 'general';
-let userLocation = null;
-let lastReply = '';
-let currentWeather = null;
+function save(){localStorage.setItem('lokopet_state',JSON.stringify(state));}
+const saveState=save;
+let currentMode='general',userLocation=null,lastReply='',currentWeather=null;
 
 // ============================================================
-// Time Theme (コンテンツ部 Eito)
+// Time Theme
 // ============================================================
-const TIME_CLASSES = ['time-morning', 'time-afternoon', 'time-evening', 'time-night'];
-function applyTimeTheme() {
-  const h = new Date().getHours();
-  const cls = h >= 5 && h < 11 ? 'time-morning' :
-              h >= 11 && h < 16 ? 'time-afternoon' :
-              h >= 16 && h < 19 ? 'time-evening' : 'time-night';
-  document.body.classList.remove(...TIME_CLASSES);
-  document.body.classList.add(cls);
-}
-function toggleDarkMode() {
-  const active = document.body.classList.toggle('dark-mode');
-  document.getElementById('darkModeBtn').textContent = active ? '☀️' : '🌙';
-  localStorage.setItem('darkMode', active ? 'on' : 'off');
-}
+const TIME_CLASSES=['time-morning','time-afternoon','time-evening','time-night'];
+function applyTimeTheme(){const h=new Date().getHours();const c=h>=5&&h<11?'time-morning':h>=11&&h<16?'time-afternoon':h>=16&&h<19?'time-evening':'time-night';document.body.classList.remove(...TIME_CLASSES);document.body.classList.add(c);}
+function toggleDarkMode(){const a=document.body.classList.toggle('dark-mode');document.getElementById('darkModeBtn').textContent=a?'☀️':'🌙';localStorage.setItem('darkMode',a?'on':'off');}
 
 // ============================================================
-// Weather (リサーチ部 Asahi)
+// Weather
 // ============================================================
-const WEATHER_CODE_MAP = {
-  0:'☀️',1:'⛅',2:'⛅',3:'⛅',45:'🌫️',48:'🌫️',
-  51:'🌧️',53:'🌧️',55:'🌧️',56:'🌧️',57:'🌧️',
-  61:'🌧️',63:'🌧️',65:'🌧️',66:'🌧️',67:'🌧️',
-  71:'🌨️',73:'🌨️',75:'🌨️',77:'🌨️',
-  80:'🌧️',81:'🌧️',82:'🌧️',85:'🌨️',86:'🌨️',
-  95:'⚡',96:'⚡',99:'⚡',
-};
-async function fetchWeather(lat, lon) {
-  try {
-    const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=auto`);
-    const data = await res.json();
-    const temp = data.current.temperature_2m;
-    const code = data.current.weather_code;
-    const icon = WEATHER_CODE_MAP[code] || '🌤️';
-    currentWeather = { temp, code, icon };
-    document.getElementById('weatherIcon').textContent = icon;
-    document.getElementById('weatherTemp').textContent = `${temp}°C`;
-    document.getElementById('weatherBadge').classList.add('visible');
-  } catch(e) { currentWeather = null; }
-}
+const WC={0:'☀️',1:'⛅',2:'⛅',3:'⛅',45:'🌫️',48:'🌫️',51:'🌧️',53:'🌧️',55:'🌧️',61:'🌧️',63:'🌧️',65:'🌧️',71:'🌨️',73:'🌨️',75:'🌨️',80:'🌧️',81:'🌧️',82:'🌧️',95:'⚡',96:'⚡',99:'⚡'};
+async function fetchWeather(lat,lon){try{const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=auto`);const d=await r.json();currentWeather={temp:d.current.temperature_2m,icon:WC[d.current.weather_code]||'🌤️'};document.getElementById('weatherIcon').textContent=currentWeather.icon;document.getElementById('weatherTemp').textContent=`${currentWeather.temp}°C`;document.getElementById('weatherBadge').classList.add('visible');}catch(e){currentWeather=null;}}
 
 // ============================================================
-// Daily Missions (事業開発部 Sota)
+// Missions
 // ============================================================
-const DAILY_MISSIONS = [
-  { id: 'explore', icon: '🗺️', label: '位置情報で提案を聞く', goal: 3, reward: 20 },
-  { id: 'tap', icon: '🐾', label: 'ペットをタップ', goal: 5, reward: 10 },
-  { id: 'freechat', icon: '💬', label: '自由に話すを使う', goal: 1, reward: 5 },
-  { id: 'share', icon: '📤', label: '結果をシェア', goal: 1, reward: 15 },
-];
-function getTodayStr() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
-function initMissions() {
-  const today = getTodayStr();
-  if (state.lastMissionDate !== today) {
-    state.lastMissionDate = today;
-    state.missions = {};
-    DAILY_MISSIONS.forEach(m => { state.missions[m.id] = { progress: 0, claimed: false }; });
-    state.missionAllClaimed = false;
-    save();
-  }
-  if (!state.missions || Object.keys(state.missions).length === 0) {
-    state.missions = {};
-    DAILY_MISSIONS.forEach(m => { state.missions[m.id] = { progress: 0, claimed: false }; });
-    save();
-  }
-  document.getElementById('missionPanel').style.display = '';
-  renderMissions();
-}
-function advanceMission(id) {
-  const today = getTodayStr();
-  if (state.lastMissionDate !== today) initMissions();
-  const def = DAILY_MISSIONS.find(m => m.id === id);
-  if (!def) return;
-  const ms = state.missions[id];
-  if (!ms || ms.claimed) return;
-  ms.progress = Math.min(ms.progress + 1, def.goal);
-  if (ms.progress >= def.goal && !ms.claimed) {
-    ms.claimed = true;
-    gainExp(def.reward);
-    showMissionToast(def);
-  }
-  save(); renderMissions(); checkAllMissions();
-}
-function checkAllMissions() {
-  if (state.missionAllClaimed) return;
-  if (DAILY_MISSIONS.every(m => state.missions[m.id]?.claimed)) {
-    state.missionAllClaimed = true;
-    gainExp(10); save();
-    document.getElementById('missionCompleteAll').classList.add('show');
-  }
-}
-function showMissionToast(def) {
-  const t = document.createElement('div');
-  t.textContent = `${def.icon} ミッション達成！ EXP+${def.reward}`;
-  Object.assign(t.style, {
-    position:'fixed',top:'18px',left:'50%',transform:'translateX(-50%)',
-    background:'#333',color:'#fff',padding:'10px 20px',borderRadius:'24px',
-    fontSize:'0.9em',zIndex:'9999',opacity:'0',transition:'opacity 0.3s ease',
-  });
-  document.body.appendChild(t);
-  requestAnimationFrame(() => { t.style.opacity = '1'; });
-  setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 400); }, 2200);
-}
-function renderMissions() {
-  const list = document.getElementById('missionList');
-  if (!list) return;
-  list.innerHTML = DAILY_MISSIONS.map(def => {
-    const ms = state.missions?.[def.id] || { progress: 0, claimed: false };
-    const pct = Math.min(ms.progress / def.goal * 100, 100);
-    return `<div class="mission-item${ms.claimed ? ' completed' : ''}">
-      <span class="mission-icon">${def.icon}</span>
-      <div class="mission-info">
-        <div class="mission-label">${def.label} (${ms.progress}/${def.goal})</div>
-        <div class="mission-progress"><div class="mission-progress-bar" style="width:${pct}%"></div></div>
-      </div>
-      <span class="mission-reward">${ms.claimed ? '✔' : 'EXP+'+def.reward}</span>
-    </div>`;
-  }).join('');
-  if (state.missionAllClaimed) document.getElementById('missionCompleteAll').classList.add('show');
-}
+const DAILY_MISSIONS=[{id:'explore',icon:'🗺️',label:'冒険に出る',goal:3,reward:20},{id:'tap',icon:'🐾',label:'相棒をなでる',goal:5,reward:10},{id:'freechat',icon:'💬',label:'話しかける',goal:1,reward:5},{id:'share',icon:'📤',label:'冒険をシェア',goal:1,reward:15}];
+function getTodayStr(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function initMissions(){const t=getTodayStr();if(state.lastMissionDate!==t){state.lastMissionDate=t;state.missions={};DAILY_MISSIONS.forEach(m=>{state.missions[m.id]={progress:0,claimed:false};});state.missionAllClaimed=false;save();}if(!state.missions||Object.keys(state.missions).length===0){state.missions={};DAILY_MISSIONS.forEach(m=>{state.missions[m.id]={progress:0,claimed:false};});save();}document.getElementById('missionPanel').style.display='';renderMissions();}
+function advanceMission(id){const t=getTodayStr();if(state.lastMissionDate!==t)initMissions();const def=DAILY_MISSIONS.find(m=>m.id===id);if(!def)return;const ms=state.missions[id];if(!ms||ms.claimed)return;ms.progress=Math.min(ms.progress+1,def.goal);if(ms.progress>=def.goal&&!ms.claimed){ms.claimed=true;gainExp(def.reward);showMissionToast(def);}save();renderMissions();checkAllMissions();}
+function checkAllMissions(){if(state.missionAllClaimed)return;if(DAILY_MISSIONS.every(m=>state.missions[m.id]?.claimed)){state.missionAllClaimed=true;gainExp(10);save();document.getElementById('missionCompleteAll').classList.add('show');}}
+function showMissionToast(def){const t=document.createElement('div');t.textContent=`${def.icon} 達成！ EXP+${def.reward}`;Object.assign(t.style,{position:'fixed',top:'18px',left:'50%',transform:'translateX(-50%)',background:'var(--accent)',color:'#faf3e0',padding:'10px 20px',borderRadius:'6px',fontSize:'0.9em',zIndex:'9999',opacity:'0',transition:'opacity 0.3s',fontFamily:'Zen Maru Gothic, sans-serif'});document.body.appendChild(t);requestAnimationFrame(()=>{t.style.opacity='1';});setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),400);},2200);}
+function renderMissions(){const l=document.getElementById('missionList');if(!l)return;l.innerHTML=DAILY_MISSIONS.map(def=>{const ms=state.missions?.[def.id]||{progress:0,claimed:false};const pct=Math.min(ms.progress/def.goal*100,100);return `<div class="mission-item${ms.claimed?' completed':''}"><span class="mission-icon">${def.icon}</span><div class="mission-info"><div class="mission-label">${def.label} (${ms.progress}/${def.goal})</div><div class="mission-progress"><div class="mission-progress-bar" style="width:${pct}%"></div></div></div><span class="mission-reward">${ms.claimed?'✔':'EXP+'+def.reward}</span></div>`;}).join('');if(state.missionAllClaimed)document.getElementById('missionCompleteAll').classList.add('show');}
 
 // ============================================================
-// Stats Dashboard (データ分析部 Shun)
+// Stats Dashboard
 // ============================================================
-function initLoginTracking() {
-  if (!state.loginDates) state.loginDates = [];
-  const today = new Date().toISOString().slice(0, 10);
-  if (!state.loginDates.includes(today)) { state.loginDates.push(today); save(); }
-}
-function calcStats() {
-  const h = state.history || [];
-  const areaCounts = {};
-  h.forEach(i => { const loc = i.location || '不明'; areaCounts[loc] = (areaCounts[loc]||0)+1; });
-  const areaRanking = Object.entries(areaCounts).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  const areaMax = areaRanking.length > 0 ? areaRanking[0][1] : 1;
-  const modeCounts = { general:0, food:0, spot:0, weather:0, chat:0 };
-  h.forEach(i => { if (modeCounts.hasOwnProperty(i.mode)) modeCounts[i.mode]++; });
-  const modeTotal = Object.values(modeCounts).reduce((a,b)=>a+b,0) || 1;
-  const dates = (state.loginDates||[]).slice().sort();
-  let streak = 0;
-  if (dates.length > 0) {
-    streak = 1;
-    const today = new Date(); today.setHours(0,0,0,0);
-    const last = new Date(dates[dates.length-1]); last.setHours(0,0,0,0);
-    if ((today-last)/86400000 <= 1) {
-      for (let i = dates.length-1; i > 0; i--) {
-        if ((new Date(dates[i]) - new Date(dates[i-1]))/86400000 === 1) streak++; else break;
-      }
-    } else streak = 0;
-  }
-  const now = new Date(); const year = now.getFullYear(); const month = now.getMonth();
-  const activeDays = new Set();
-  h.forEach(i => { const d = new Date(i.time); if (d.getFullYear()===year && d.getMonth()===month) activeDays.add(d.getDate()); });
-  (state.loginDates||[]).forEach(ds => { const d = new Date(ds); if (d.getFullYear()===year && d.getMonth()===month) activeDays.add(d.getDate()); });
-  return { totalAdventures: h.length, areaRanking, areaMax, modeCounts, modeTotal, streak, activeDays, year, month };
-}
-function renderStats() {
-  const el = document.getElementById('statsContent');
-  const h = state.history || [];
-  if (h.length === 0 && (!state.loginDates || state.loginDates.length === 0)) {
-    el.innerHTML = '<div class="stats-empty">まだデータがないよ<br>おでかけしてデータを貯めよう！</div>'; return;
-  }
-  const s = calcStats();
-  const modeLabels = { general:{icon:'🎯',name:'おまかせ'}, food:{icon:'🍜',name:'グルメ'}, spot:{icon:'📍',name:'スポット'}, weather:{icon:'🌤',name:'天気'}, chat:{icon:'💬',name:'おしゃべり'} };
-  let areaHTML = s.areaRanking.length === 0 ? '<div style="font-size:0.8rem;color:var(--text-sub);text-align:center;">データなし</div>' :
-    '<ul class="stats-ranking">' + s.areaRanking.map(([name,count],i) =>
-      `<li><span class="rank">${i+1}</span><span style="min-width:60px;font-size:0.75rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${name}</span><span class="rank-bar-wrap"><span class="rank-bar" style="width:${(count/s.areaMax*100).toFixed(0)}%"></span></span><span class="rank-count">${count}回</span></li>`
-    ).join('') + '</ul>';
-  const modeHTML = '<div class="stats-mode-chart">' + Object.entries(s.modeCounts).map(([key,count]) => {
-    const pct = (count/s.modeTotal*100).toFixed(0);
-    return `<div class="stats-mode-row"><span class="stats-mode-label">${(modeLabels[key]||{}).icon||'?'}</span><span class="stats-mode-bar-wrap"><span class="stats-mode-bar m-${key}" style="width:${Math.max(pct,3)}%">${pct}%</span></span></div>`;
-  }).join('') + '</div>';
-  const firstDay = new Date(s.year, s.month, 1).getDay();
-  const daysInMonth = new Date(s.year, s.month+1, 0).getDate();
-  const today = new Date().getDate();
-  const isCurMonth = new Date().getFullYear()===s.year && new Date().getMonth()===s.month;
-  let calHTML = '<div class="stats-calendar">' + ['日','月','火','水','木','金','土'].map(d=>`<span class="cal-header">${d}</span>`).join('');
-  for (let i=0;i<firstDay;i++) calHTML+='<span class="cal-day empty"></span>';
-  for (let d=1;d<=daysInMonth;d++) {
-    const cls = ['cal-day']; if(s.activeDays.has(d)) cls.push('active'); if(isCurMonth&&d===today) cls.push('today');
-    calHTML+=`<span class="${cls.join(' ')}">${d}</span>`;
-  }
-  calHTML+='</div>';
-  el.innerHTML = `
-    <div class="stats-section"><h3>🏔 総冒険回数</h3><div class="stats-big-number">${s.totalAdventures}<br><small>回のおでかけ</small></div></div>
-    <div class="stats-section"><h3>📍 訪問エリアランキング TOP5</h3>${areaHTML}</div>
-    <div class="stats-section"><h3>🎯 モード別使用率</h3>${modeHTML}</div>
-    <div class="stats-section"><h3>🔥 連続ログイン</h3><div class="stats-streak"><span class="streak-fire">🔥</span><span class="streak-num">${s.streak}</span><span class="streak-label">日連続</span></div></div>
-    <div class="stats-section"><h3>📅 ${s.year}年${s.month+1}月 アクティビティ</h3>${calHTML}</div>`;
-}
-function toggleStats() {
-  document.getElementById('statsPanel').classList.toggle('open');
-  document.getElementById('statsOverlay').classList.toggle('open');
-  renderStats();
-}
+function initLoginTracking(){if(!state.loginDates)state.loginDates=[];const t=new Date().toISOString().slice(0,10);if(!state.loginDates.includes(t)){state.loginDates.push(t);save();}}
+function calcStats(){const h=state.history||[];const ac={};h.forEach(i=>{const l=i.location||'不明';ac[l]=(ac[l]||0)+1;});const ar=Object.entries(ac).sort((a,b)=>b[1]-a[1]).slice(0,5);const am=ar.length>0?ar[0][1]:1;const mc={general:0,food:0,spot:0,weather:0,chat:0};h.forEach(i=>{if(mc.hasOwnProperty(i.mode))mc[i.mode]++;});const mt=Object.values(mc).reduce((a,b)=>a+b,0)||1;const ds=(state.loginDates||[]).slice().sort();let st=0;if(ds.length>0){st=1;const td=new Date();td.setHours(0,0,0,0);const ld=new Date(ds[ds.length-1]);ld.setHours(0,0,0,0);if((td-ld)/864e5<=1){for(let i=ds.length-1;i>0;i--){if((new Date(ds[i])-new Date(ds[i-1]))/864e5===1)st++;else break;}}else st=0;}const now=new Date(),yr=now.getFullYear(),mo=now.getMonth();const ad=new Set();h.forEach(i=>{const d=new Date(i.time);if(d.getFullYear()===yr&&d.getMonth()===mo)ad.add(d.getDate());});(state.loginDates||[]).forEach(s=>{const d=new Date(s);if(d.getFullYear()===yr&&d.getMonth()===mo)ad.add(d.getDate());});return{total:h.length,ar,am,mc,mt,st,ad,yr,mo};}
+function renderStats(){const el=document.getElementById('statsContent');const h=state.history||[];if(h.length===0&&(!state.loginDates||state.loginDates.length===0)){el.innerHTML='<div class="stats-empty">まだ記録がないよ<br>冒険に出てデータを貯めよう</div>';return;}const s=calcStats();const ml={general:{i:'🎯'},food:{i:'🍜'},spot:{i:'📍'},weather:{i:'🌤'},chat:{i:'💬'}};let aH=s.ar.length===0?'<div style="font-size:0.8rem;color:var(--text-sub);text-align:center;">データなし</div>':'<ul class="stats-ranking">'+s.ar.map(([n,c],i)=>`<li><span class="rank">${i+1}</span><span style="min-width:60px;font-size:0.75rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${n}</span><span class="rank-bar-wrap"><span class="rank-bar" style="width:${(c/s.am*100).toFixed(0)}%"></span></span><span class="rank-count">${c}回</span></li>`).join('')+'</ul>';const mH='<div class="stats-mode-chart">'+Object.entries(s.mc).map(([k,c])=>{const p=(c/s.mt*100).toFixed(0);return`<div class="stats-mode-row"><span class="stats-mode-label">${(ml[k]||{}).i||'?'}</span><span class="stats-mode-bar-wrap"><span class="stats-mode-bar m-${k}" style="width:${Math.max(p,3)}%">${p}%</span></span></div>`;}).join('')+'</div>';const fd=new Date(s.yr,s.mo,1).getDay(),dm=new Date(s.yr,s.mo+1,0).getDate(),td=new Date().getDate(),cm=new Date().getFullYear()===s.yr&&new Date().getMonth()===s.mo;let cH='<div class="stats-calendar">'+['日','月','火','水','木','金','土'].map(d=>`<span class="cal-header">${d}</span>`).join('');for(let i=0;i<fd;i++)cH+='<span class="cal-day empty"></span>';for(let d=1;d<=dm;d++){const cl=['cal-day'];if(s.ad.has(d))cl.push('active');if(cm&&d===td)cl.push('today');cH+=`<span class="${cl.join(' ')}">${d}</span>`;}cH+='</div>';el.innerHTML=`<div class="stats-section"><h3>🏔 総冒険回数</h3><div class="stats-big-number">${s.total}<br><small>回の冒険</small></div></div><div class="stats-section"><h3>📍 よく行くエリア</h3>${aH}</div><div class="stats-section"><h3>🎯 モード別</h3>${mH}</div><div class="stats-section"><h3>🔥 連続ログイン</h3><div class="stats-streak"><span style="font-size:1.6rem">🔥</span><span class="streak-num">${s.st}</span><span class="streak-label">日連続</span></div></div><div class="stats-section"><h3>📅 ${s.yr}年${s.mo+1}月</h3>${cH}</div>`;}
+function toggleStats(){document.getElementById('statsPanel').classList.toggle('open');document.getElementById('statsOverlay').classList.toggle('open');renderStats();}
 
 // ============================================================
-// Share Card (マーケ部 Sho)
+// Share Card
 // ============================================================
-function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();}
-function wrapText(ctx,text,maxW,maxLines){const chars=text.replace(/\n/g,' ');const lines=[];let cur='';for(const ch of chars){const test=cur+ch;if(ctx.measureText(test).width>maxW){lines.push(cur);cur=ch;if(lines.length>=maxLines){lines[lines.length-1]+='…';return lines;}}else{cur=test;}}if(cur)lines.push(cur);return lines;}
-async function generateShareCard(){
-  const canvas=document.getElementById('shareCanvas');const ctx=canvas.getContext('2d');const W=canvas.width,H=canvas.height;
-  const pet=PET_TYPES[state.petTypeIdx];const loc=userLocation?.geo?.short||userLocation?.geo?.display||'現在地';
-  const grad=ctx.createLinearGradient(0,0,W,H);grad.addColorStop(0,'#6C63FF');grad.addColorStop(0.5,'#48C6EF');grad.addColorStop(1,'#A8EDEA');
-  ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
-  ctx.globalAlpha=0.08;ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(W*0.85,H*0.15,200,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(W*0.1,H*0.8,160,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
-  ctx.fillStyle='rgba(255,255,255,0.92)';roundRect(ctx,60,80,W-120,H-240,40);ctx.fill();
-  ctx.font='140px serif';ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(pet.emoji,W/2,120);
-  ctx.fillStyle='#333';ctx.font='bold 48px sans-serif';ctx.fillText(`${state.petName} のおすすめ`,W/2,290);
-  ctx.strokeStyle='rgba(108,99,255,0.25)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(120,360);ctx.lineTo(W-120,360);ctx.stroke();
-  ctx.fillStyle='#222';ctx.font='36px sans-serif';ctx.textAlign='left';
-  const lines=wrapText(ctx,lastReply||'おすすめスポットを探索中…',W-220,7);let ty=390;
-  for(const l of lines){ctx.fillText(l,110,ty);ty+=52;}
-  ctx.fillStyle='#6C63FF';ctx.font='bold 32px sans-serif';ctx.textAlign='center';ctx.fillText(`📍 ${loc.slice(0,24)}`,W/2,H-280);
-  ctx.fillStyle='rgba(255,255,255,0.9)';ctx.font='bold 38px sans-serif';ctx.fillText('🐾 ロケペット',W/2,H-90);
-  ctx.fillStyle='rgba(255,255,255,0.55)';ctx.font='24px sans-serif';ctx.fillText('#ロケペット  #AIペット',W/2,H-45);
-}
-function openShareCard(){generateShareCard();document.getElementById('shareCardOverlay').classList.add('active');const nb=document.getElementById('btnShareNative');nb.style.display=navigator.canShare?'':'none';}
+function roundRect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.lineTo(x+w-r,y);c.quadraticCurveTo(x+w,y,x+w,y+r);c.lineTo(x+w,y+h-r);c.quadraticCurveTo(x+w,y+h,x+w-r,y+h);c.lineTo(x+r,y+h);c.quadraticCurveTo(x,y+h,x,y+h-r);c.lineTo(x,y+r);c.quadraticCurveTo(x,y,x+r,y);c.closePath();}
+function wrapText(c,t,mw,ml){const ch=t.replace(/\n/g,' ');const ls=[];let cu='';for(const ch2 of ch){const te=cu+ch2;if(c.measureText(te).width>mw){ls.push(cu);cu=ch2;if(ls.length>=ml){ls[ls.length-1]+='…';return ls;}}else cu=te;}if(cu)ls.push(cu);return ls;}
+async function generateShareCard(){const cv=document.getElementById('shareCanvas');const c=cv.getContext('2d');const W=cv.width,H=cv.height;const pet=PET_TYPES[state.petTypeIdx];const loc=userLocation?.geo?.short||'現在地';const g=c.createLinearGradient(0,0,W,H);g.addColorStop(0,'#e07a5f');g.addColorStop(0.5,'#f2cc8f');g.addColorStop(1,'#81b29a');c.fillStyle=g;c.fillRect(0,0,W,H);c.fillStyle='rgba(255,255,255,0.92)';roundRect(c,60,80,W-120,H-240,20);c.fill();c.font='140px serif';c.textAlign='center';c.textBaseline='top';c.fillText(pet.emoji,W/2,120);c.fillStyle='#3d405b';c.font='bold 48px sans-serif';c.fillText(`${state.petName} のおすすめ`,W/2,290);c.strokeStyle='rgba(224,122,95,0.3)';c.lineWidth=2;c.beginPath();c.moveTo(120,360);c.lineTo(W-120,360);c.stroke();c.fillStyle='#2d2d2d';c.font='36px sans-serif';c.textAlign='left';const lines=wrapText(c,lastReply||'...',W-220,7);let ty=390;for(const l of lines){c.fillText(l,110,ty);ty+=52;}c.fillStyle='#e07a5f';c.font='bold 32px sans-serif';c.textAlign='center';c.fillText(`📍 ${loc.slice(0,24)}`,W/2,H-280);c.fillStyle='rgba(255,255,255,0.9)';c.font='bold 38px sans-serif';c.fillText('🐾 ロケペット',W/2,H-90);c.fillStyle='rgba(255,255,255,0.55)';c.font='24px sans-serif';c.fillText('#ロケペット #冒険手帳',W/2,H-45);}
+function openShareCard(){generateShareCard();document.getElementById('shareCardOverlay').classList.add('active');document.getElementById('btnShareNative').style.display=navigator.canShare?'':'none';}
 function closeShareCard(e){if(e&&e.target!==e.currentTarget)return;document.getElementById('shareCardOverlay').classList.remove('active');}
-async function shareWithCard(){
-  const canvas=document.getElementById('shareCanvas');
-  const blob=await new Promise(r=>canvas.toBlob(r,'image/png'));
-  const file=new File([blob],'lokepet-card.png',{type:'image/png'});
-  const pet=PET_TYPES[state.petTypeIdx];const text=`${pet.emoji} ${state.petName}のおすすめ！\n🐾 #ロケペット`;
-  if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({title:'ロケペット',text,files:[file]});}catch(e){if(e.name!=='AbortError')navigator.clipboard.writeText(text);}}
-  else{navigator.clipboard.writeText(text).then(()=>setBubble('📋 コピーしたよ！'));}
-}
-function shareToX(){const pet=PET_TYPES[state.petTypeIdx];const text=encodeURIComponent(`${pet.emoji} ${state.petName}のおすすめ！\n🐾 #ロケペット`);const url=encodeURIComponent(location.href);window.open(`https://x.com/intent/post?text=${text}&url=${url}`,'_blank');}
-function downloadShareCard(){const c=document.getElementById('shareCanvas');const a=document.createElement('a');a.download=`lokepet-${Date.now()}.png`;a.href=c.toDataURL('image/png');a.click();}
+async function shareWithCard(){const cv=document.getElementById('shareCanvas');const b=await new Promise(r=>cv.toBlob(r,'image/png'));const f=new File([b],'lokepet.png',{type:'image/png'});const t=`${PET_TYPES[state.petTypeIdx].emoji} ${state.petName}のおすすめ！\n🐾 #ロケペット`;if(navigator.canShare?.({files:[f]})){try{await navigator.share({title:'ロケペット',text:t,files:[f]});}catch(e){if(e.name!=='AbortError')navigator.clipboard.writeText(t);}}else navigator.clipboard.writeText(t).then(()=>setBubble('📋 コピーしたよ！'));}
+function shareToX(){const t=encodeURIComponent(`${PET_TYPES[state.petTypeIdx].emoji} ${state.petName}のおすすめ！\n🐾 #ロケペット`);window.open(`https://x.com/intent/post?text=${t}&url=${encodeURIComponent(location.href)}`,'_blank');}
+function downloadShareCard(){const a=document.createElement('a');a.download=`lokepet-${Date.now()}.png`;a.href=document.getElementById('shareCanvas').toDataURL('image/png');a.click();}
 
 // ============================================================
-// Setup / Onboarding
+// Init
 // ============================================================
-window.onload = () => {
+window.onload=()=>{
   applyTimeTheme();
-  if (localStorage.getItem('darkMode') === 'on') {
-    document.body.classList.add('dark-mode');
-    document.getElementById('darkModeBtn').textContent = '☀️';
-  }
-  setInterval(applyTimeTheme, 5 * 60 * 1000);
-
-  localStorage.removeItem('gemini_api_key');
-  const oldKey = localStorage.getItem('groq_api_key');
-  if (oldKey && !state.setupDone) { state.apiKey = oldKey; localStorage.removeItem('groq_api_key'); }
-
-  if (state.setupDone) { showApp(); } else { renderPetSelect(); }
-
-  document.querySelectorAll('.chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      currentMode = chip.dataset.mode;
-    });
-  });
-  setInterval(() => { if (state.mood > 20) { state.mood -= 1; save(); updateStats(); } }, 30 * 60 * 1000);
+  if(localStorage.getItem('darkMode')==='on'){document.body.classList.add('dark-mode');document.getElementById('darkModeBtn').textContent='☀️';}
+  setInterval(applyTimeTheme,5*60*1000);
+  const oldKey=localStorage.getItem('groq_api_key');if(oldKey&&!state.setupDone){state.apiKey=oldKey;localStorage.removeItem('groq_api_key');}
+  if(state.setupDone)showApp();else renderPetSelect();
+  document.querySelectorAll('.chip').forEach(c=>{c.addEventListener('click',()=>{document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));c.classList.add('active');currentMode=c.dataset.mode;});});
+  setInterval(()=>{if(state.mood>20){state.mood-=1;save();updatePetStats();}},30*60*1000);
 };
 
-function renderPetSelect() {
-  document.getElementById('petSelect').innerHTML = PET_TYPES.map((p, i) =>
-    `<button class="setup-pet-option${i===state.petTypeIdx?' selected':''}" onclick="selectPetType(${i})">${p.emoji}</button>`
-  ).join('');
-}
-function selectPetType(i) {
-  state.petTypeIdx = i;
-  document.querySelectorAll('.setup-pet-option').forEach((el,j) => el.classList.toggle('selected', j===i));
-}
-function setupNext(step) {
-  document.querySelectorAll('.setup-step').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.setup-dot').forEach(d => d.classList.remove('active'));
-  if (step === 2) {
-    document.getElementById('step2').classList.add('active');
-    document.getElementById('step2Pet').textContent = PET_TYPES[state.petTypeIdx].emoji;
-    document.getElementById('petNameInput').value = state.petName;
-    document.getElementById('dot2').classList.add('active');
-  } else if (step === 3) {
-    state.petName = document.getElementById('petNameInput').value.trim() || PET_TYPES[state.petTypeIdx].personality;
-    document.getElementById('step3').classList.add('active');
-    document.getElementById('dot3').classList.add('active');
-  }
-}
-function completeSetup() {
-  const key = document.getElementById('apiKeyInput').value.trim();
-  if (!key.startsWith('gsk_')) { alert('gsk_ で始まるGroq APIキーを入力してください'); return; }
-  state.apiKey = key; state.setupDone = true; save(); showApp();
-}
-function showApp() {
+function renderPetSelect(){document.getElementById('petSelect').innerHTML=PET_TYPES.map((p,i)=>`<button class="setup-pet-option${i===state.petTypeIdx?' selected':''}" onclick="selectPetType(${i})">${p.emoji}</button>`).join('');}
+function selectPetType(i){state.petTypeIdx=i;document.querySelectorAll('.setup-pet-option').forEach((el,j)=>el.classList.toggle('selected',j===i));}
+function setupNext(step){document.querySelectorAll('.setup-step').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.setup-dot').forEach(d=>d.classList.remove('active'));if(step===2){document.getElementById('step2').classList.add('active');document.getElementById('step2Pet').textContent=PET_TYPES[state.petTypeIdx].emoji;document.getElementById('petNameInput').value=state.petName;document.getElementById('dot2').classList.add('active');}else if(step===3){state.petName=document.getElementById('petNameInput').value.trim()||PET_TYPES[state.petTypeIdx].personality;document.getElementById('step3').classList.add('active');document.getElementById('dot3').classList.add('active');}}
+function completeSetup(){const k=document.getElementById('apiKeyInput').value.trim();if(!k.startsWith('gsk_')){alert('gsk_ で始まるGroq APIキーを入力してください');return;}state.apiKey=k;state.setupDone=true;save();showApp();}
+
+function showApp(){
   document.getElementById('setup').classList.add('hidden');
-  const app = document.getElementById('app');
-  app.classList.remove('hidden');
-  app.style.display = 'flex'; app.style.flexDirection = 'column';
-  app.style.alignItems = 'center'; app.style.width = '100%';
-  const pet = PET_TYPES[state.petTypeIdx];
-  document.getElementById('petEmoji').textContent = pet.emoji;
-  document.getElementById('petNameDisplay').textContent = state.petName;
-  updateStats();
-  const hour = new Date().getHours();
-  const greet = hour < 6 ? 'こんな時間まで起きてるの？' : hour < 12 ? 'おはよう！今日はどこ行く？' : hour < 18 ? 'こんにちは！お出かけ日和だね' : 'こんばんは〜 夜のお散歩かな？';
-  setBubble(`${greet}${pet.suffix}！✨`);
-  initMissions();
-  initLoginTracking();
+  const app=document.getElementById('app');app.classList.remove('hidden');app.style.display='flex';app.style.flexDirection='column';app.style.alignItems='center';app.style.width='100%';
+  const pet=PET_TYPES[state.petTypeIdx];
+  document.getElementById('petEmoji').textContent=pet.emoji;
+  document.getElementById('petNameDisplay').textContent=state.petName;
+  updatePetStats();
+  const h=new Date().getHours();
+  const greet=h<6?pet.greeting.earlyMorning:h<12?pet.greeting.morning:h<18?pet.greeting.afternoon:pet.greeting.evening;
+  setBubble(greet);
+  initMissions();initLoginTracking();
 }
-function resetApp() {
-  if (confirm('ペットデータをリセットしますか？')) {
-    localStorage.removeItem('lokopet_state');
-    state = defaultState();
-    document.getElementById('setup').classList.remove('hidden');
-    document.getElementById('app').classList.add('hidden');
-    renderPetSelect();
-    document.querySelectorAll('.setup-step').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.setup-dot').forEach(d => d.classList.remove('active'));
-    document.getElementById('step1').classList.add('active');
-    document.getElementById('dot1').classList.add('active');
-  }
-}
+
+function resetApp(){if(confirm('データをリセットする？')){localStorage.removeItem('lokopet_state');state=defaultState();document.getElementById('setup').classList.remove('hidden');document.getElementById('app').classList.add('hidden');renderPetSelect();document.querySelectorAll('.setup-step').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.setup-dot').forEach(d=>d.classList.remove('active'));document.getElementById('step1').classList.add('active');document.getElementById('dot1').classList.add('active');}}
 
 // ============================================================
 // Pet Interaction
 // ============================================================
-function tapPet(event) {
-  const pet = PET_TYPES[state.petTypeIdx];
-  for (let i = 0; i < 3; i++) {
-    const heart = document.createElement('span');
-    heart.className = 'heart-particle';
-    heart.textContent = ['❤️','💕','✨','💖','⭐'][Math.floor(Math.random()*5)];
-    heart.style.left = (60 + Math.random()*40) + 'px';
-    heart.style.top = (40 + Math.random()*30) + 'px';
-    heart.style.animationDelay = (i * 0.15) + 's';
-    document.getElementById('petArea').appendChild(heart);
-    setTimeout(() => heart.remove(), 1200);
-  }
-  state.mood = Math.min(100, state.mood + 3); save(); updateStats();
-  advanceMission('tap');
-  const msgs = [
-    `なでなで嬉しい${pet.suffix}〜 ✨`, `もっと撫でて${pet.suffix}！💕`,
-    `えへへ${pet.suffix}〜 😊`, `お出かけしたい${pet.suffix}！🗺️`,
-    `お腹すいた${pet.suffix}〜 🍖`, `一緒にいると楽しい${pet.suffix}！🎵`,
-  ];
-  setBubble(msgs[Math.floor(Math.random() * msgs.length)]);
-}
-function changePetEmoji() {
-  state.petTypeIdx = (state.petTypeIdx + 1) % PET_TYPES.length;
-  const pet = PET_TYPES[state.petTypeIdx];
-  document.getElementById('petEmoji').textContent = pet.emoji;
-  save();
-  setBubble(`${pet.personality}に変身！${pet.traits}${pet.suffix}！✨`);
-}
+function tapPet(event){const pet=PET_TYPES[state.petTypeIdx];for(let i=0;i<3;i++){const heart=document.createElement('span');heart.className='heart-particle';heart.textContent=['❤️','💕','✨','💖','⭐'][Math.floor(Math.random()*5)];heart.style.left=(60+Math.random()*40)+'px';heart.style.top=(40+Math.random()*30)+'px';heart.style.animationDelay=(i*0.15)+'s';document.getElementById('petArea').appendChild(heart);setTimeout(()=>heart.remove(),1200);}state.mood=Math.min(100,state.mood+3);save();updatePetStats();advanceMission('tap');setBubble(pet.tapMessages[Math.floor(Math.random()*pet.tapMessages.length)]);}
+function changePetEmoji(){state.petTypeIdx=(state.petTypeIdx+1)%PET_TYPES.length;const pet=PET_TYPES[state.petTypeIdx];document.getElementById('petEmoji').textContent=pet.emoji;save();setBubble(`${pet.personality}に変身！ ${pet.tapMessages[0]}`);}
 
 // ============================================================
 // Stats & Level
 // ============================================================
-function updateStats() {
-  document.getElementById('moodBar').style.width = state.mood + '%';
-  const expForLevel = state.level * 30;
-  document.getElementById('expBar').style.width = Math.min(100, (state.exp / expForLevel) * 100) + '%';
-  document.getElementById('exploreBar').style.width = Math.min(100, state.totalExplore * 10) + '%';
-  document.getElementById('levelBadge').textContent = `Lv.${state.level}`;
-}
-function gainExp(amount) {
-  state.exp += amount;
-  const expForLevel = state.level * 30;
-  if (state.exp >= expForLevel) {
-    state.exp -= expForLevel; state.level++;
-    const pet = PET_TYPES[state.petTypeIdx];
-    setTimeout(() => {
-      const petEl = document.getElementById('petEmoji');
-      petEl.classList.add('happy');
-      setTimeout(() => petEl.classList.remove('happy'), 1600);
-      setBubble(`🎉 レベルアップ${pet.suffix}！Lv.${state.level}になった！もっとお出かけしよう！`);
-    }, 500);
-  }
-  state.mood = Math.min(100, state.mood + 5);
-  state.totalExplore++; save(); updateStats();
-}
+function updatePetStats(){document.getElementById('moodBar').style.width=state.mood+'%';const e=state.level*30;document.getElementById('expBar').style.width=Math.min(100,(state.exp/e)*100)+'%';document.getElementById('exploreBar').style.width=Math.min(100,state.totalExplore*10)+'%';document.getElementById('levelBadge').textContent=`Lv.${state.level}`;}
+function gainExp(a){state.exp+=a;const e=state.level*30;if(state.exp>=e){state.exp-=e;state.level++;const pet=PET_TYPES[state.petTypeIdx];setTimeout(()=>{const el=document.getElementById('petEmoji');el.classList.add('happy');setTimeout(()=>el.classList.remove('happy'),1600);setBubble(`🎉 Lv.${state.level}になった！`);},500);}state.mood=Math.min(100,state.mood+5);state.totalExplore++;save();updatePetStats();}
 
-// ============================================================
-// Bubble
-// ============================================================
-function setBubble(text) { document.getElementById('bubble').innerHTML = text; }
-function showBubbleActions(show) { document.getElementById('bubbleActions').classList.toggle('hidden', !show); }
+function setBubble(t){document.getElementById('bubble').innerHTML=t;}
+function showBubbleActions(s){document.getElementById('bubbleActions').classList.toggle('hidden',!s);}
 
 // ============================================================
 // Groq API
 // ============================================================
-async function callGroq(prompt) {
-  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${state.apiKey}` },
-    body: JSON.stringify({ model: 'llama-3.3-70b-versatile', messages: [{ role: 'user', content: prompt }], max_tokens: 400, temperature: 0.85 })
-  });
-  if (!res.ok) { const err = await res.json(); throw new Error(err.error?.message || 'APIエラー'); }
-  const data = await res.json();
-  return data.choices?.[0]?.message?.content || 'うまく返事できなかった…';
-}
+async function callGroq(p){const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${state.apiKey}`},body:JSON.stringify({model:'llama-3.3-70b-versatile',messages:[{role:'user',content:p}],max_tokens:400,temperature:0.85})});if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'APIエラー');}const d=await r.json();return d.choices?.[0]?.message?.content||'...';}
 
 // ============================================================
 // Reverse Geocoding
 // ============================================================
-async function reverseGeocode(lat, lon) {
-  try {
-    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=ja&zoom=18`, { headers: { 'User-Agent': 'LocoPet/2.0' } });
-    const data = await res.json(); const a = data.address || {};
-    const parts = [a.state, a.city||a.town||a.village||a.county, a.suburb||a.neighbourhood||a.quarter, a.road].filter(Boolean);
-    return { display: parts.join(' '), short: (a.city||a.town||a.village||'') + ' ' + (a.suburb||a.neighbourhood||''), landmark: data.name||'', raw: a };
-  } catch(e) { return { display: `${lat.toFixed(4)}, ${lon.toFixed(4)}`, short: '', landmark: '', raw: {} }; }
-}
+async function reverseGeocode(lat,lon){try{const r=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=ja&zoom=18`,{headers:{'User-Agent':'LocoPet/2.0'}});const d=await r.json();const a=d.address||{};const parts=[a.state,a.city||a.town||a.village||a.county,a.suburb||a.neighbourhood||a.quarter,a.road].filter(Boolean);return{display:parts.join(' '),short:(a.city||a.town||a.village||'')+' '+(a.suburb||a.neighbourhood||''),landmark:d.name||'',raw:a};}catch(e){return{display:`${lat.toFixed(4)}, ${lon.toFixed(4)}`,short:'',landmark:'',raw:{}};}}
 
 // ============================================================
-// Location + Ask
+// Location + Ask (プロンプト改善済)
 // ============================================================
-async function getLocationAndAsk() {
-  if (!navigator.geolocation) { setBubble('このブラウザは位置情報に対応してないみたい 😢'); return; }
-  const btn = document.getElementById('mainBtn'); btn.disabled = true;
-  const petEl = document.getElementById('petEmoji'); petEl.classList.add('thinking');
-  showBubbleActions(false);
-  const pet = PET_TYPES[state.petTypeIdx];
-  setBubble(`どこにいるか調べてる${pet.suffix}〜 🔍`);
-  navigator.geolocation.getCurrentPosition(
-    async (pos) => {
-      userLocation = { lat: pos.coords.latitude, lon: pos.coords.longitude, accuracy: Math.round(pos.coords.accuracy) };
-      setBubble(`地名を調べてる${pet.suffix}... 🗺️`);
-      userLocation.geo = await reverseGeocode(userLocation.lat, userLocation.lon);
-      await fetchWeather(userLocation.lat, userLocation.lon);
-      document.getElementById('locationBadge').textContent = `📍 ${userLocation.geo.display}`;
-      document.getElementById('locationBadge').classList.add('visible');
-      await askWithLocation();
-      btn.disabled = false; petEl.classList.remove('thinking');
-      advanceMission('explore');
-    },
-    (err) => {
-      btn.disabled = false; petEl.classList.remove('thinking');
-      setBubble(`位置情報を教えてもらえなかった${pet.suffix}…😿<br>ブラウザの設定で許可してね！`);
-    },
-    { enableHighAccuracy: true, timeout: 15000 }
-  );
-}
+async function getLocationAndAsk(){if(!navigator.geolocation){setBubble('位置情報に対応してないみたい...');return;}const btn=document.getElementById('mainBtn');btn.disabled=true;const petEl=document.getElementById('petEmoji');petEl.classList.add('thinking');showBubbleActions(false);const pet=PET_TYPES[state.petTypeIdx];setBubble(`${pet.emoji} ...`);
+navigator.geolocation.getCurrentPosition(async(pos)=>{userLocation={lat:pos.coords.latitude,lon:pos.coords.longitude};userLocation.geo=await reverseGeocode(userLocation.lat,userLocation.lon);await fetchWeather(userLocation.lat,userLocation.lon);document.getElementById('locationBadge').textContent=`📍 ${userLocation.geo.display}`;document.getElementById('locationBadge').classList.add('visible');await askWithLocation();btn.disabled=false;petEl.classList.remove('thinking');advanceMission('explore');},(err)=>{btn.disabled=false;petEl.classList.remove('thinking');setBubble(`位置情報を許可してくれないと動けないよ...`);},{enableHighAccuracy:true,timeout:15000});}
 
-async function askWithLocation() {
-  const pet = PET_TYPES[state.petTypeIdx];
-  const now = new Date();
-  const timeStr = now.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
-  const dateStr = now.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' });
-  const modePrompts = {
-    general: '今いる場所でできることを3つ提案して。具体的な店名・施設名・地名を挙げること。',
-    food: '周辺で食べられるご飯を3つ提案。具体的な料理名・有名店・商店街・エリア名を含むこと。',
-    spot: '歩いて行ける観光スポット・公園・名所を3つ。具体的な固有名詞付きで。',
-    weather: `今の季節(${dateStr})のこの地域の気候の特徴と、${timeStr}現在の過ごし方・服装のアドバイスを具体的に。`,
-    chat: 'この場所の面白い歴史・文化・グルメのトリビアを2〜3個、具体的な名前付きで。',
+async function askWithLocation(){
+  const pet=PET_TYPES[state.petTypeIdx],now=new Date();
+  const timeStr=now.toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});
+  const dateStr=now.toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
+  const modePrompts={
+    general:'ここで今すぐできる面白いこと、地元の人しか知らないようなネタも含めて教えて。ガイドブックに載ってるようなことは要らない。',
+    food:'この辺でマジで美味い飯。チェーン店じゃなくて、地元民が通う店とか、この地域ならではの味を教えて。具体的な店名や通りの名前も。',
+    spot:'ここから歩いて行ける場所で、写真撮りたくなるような場所とか、ふらっと寄れる穴場を教えて。有名観光地より地元の人が好きな場所優先で。',
+    weather:`今日は${dateStr}、${timeStr}。この地域のこの時期の気候と、今の時間帯にベストな過ごし方・服装を、友達のノリで教えて。`,
+    chat:'この辺の「へぇ〜」ってなるトリビア教えて。歴史でも文化でもグルメでも。友達に自慢できるようなやつ。',
   };
-  const geo = userLocation.geo;
-  const landmark = geo.landmark ? `\n- 近くの施設: ${geo.landmark}` : '';
-  const weatherInfo = currentWeather ? `\n- 天気: ${currentWeather.icon} ${currentWeather.temp}°C` : '';
-  const prompt = `あなたは「${state.petName}」という名前の${pet.personality}ペットAI(${pet.emoji})です。
-性格: ${pet.traits}
-語尾に「${pet.suffix}」をつけてね。
-日本語でフレンドリーに、絵文字を使って、200文字以内で答えて。
-抽象的な表現は避け、必ず実在しそうな地名・店名・施設名・通り名を具体的に挙げること。
-ペットのレベルはLv.${state.level}。レベルが高いほど詳しく教えられる設定。
+  const geo=userLocation.geo,lm=geo.landmark?`\n- 近く: ${geo.landmark}`:'',wi=currentWeather?`\n- 天気: ${currentWeather.icon} ${currentWeather.temp}°C`:'';
+  const prompt=`あなたは「${state.petName}」(${pet.emoji})。${pet.personality}。
+キャラ設定: ${pet.traits}
 
-【ユーザーの現在地】
-- 住所: ${geo.display}${landmark}${weatherInfo}
-- 日時: ${dateStr} ${timeStr}
+【絶対ルール】
+- 箇条書き禁止。友達に話すみたいに会話調で答えること。
+- 「〜がおすすめです！」みたいなテンプレ禁止。${state.petName}の性格で喋ること。
+- 語尾は「${pet.suffix}」を自然に使う（毎文じゃなくていい）。
+- 200文字以内。短くても中身が濃ければOK。
+- 実在する地名・店名・施設名・通り名を具体的に出すこと。
+- Lv.${state.level}の知識レベル。Lv高いほどディープな情報出せる。
 
-【タスク】${modePrompts[currentMode]}`;
-  setBubble(`考え中${pet.suffix}... 🤔`);
-  try {
-    const reply = await callGroq(prompt);
-    lastReply = reply;
-    setBubble(reply.replace(/\n/g, '<br>'));
-    showBubbleActions(true);
-    gainExp(10);
-    state.history.unshift({ time: now.toISOString(), location: geo.short || geo.display, mode: currentMode, reply: reply.substring(0, 120) });
-    if (state.history.length > 30) state.history.pop();
-    save();
-  } catch(e) {
-    setBubble(`エラーが起きちゃった${pet.suffix}…😿<br><small>${e.message}</small>`);
-    showBubbleActions(false);
-  }
+【今いる場所】
+- ${geo.display}${lm}${wi}
+- ${dateStr} ${timeStr}
+
+${modePrompts[currentMode]}`;
+  setBubble(`${pet.emoji} ...`);
+  try{const reply=await callGroq(prompt);lastReply=reply;setBubble(reply.replace(/\n/g,'<br>'));showBubbleActions(true);gainExp(10);state.history.unshift({time:now.toISOString(),location:geo.short||geo.display,mode:currentMode,reply:reply.substring(0,120)});if(state.history.length>30)state.history.pop();save();}
+  catch(e){setBubble(`あれ、うまくいかなかった...ごめん<br><small>${e.message}</small>`);showBubbleActions(false);}
 }
 
 // ============================================================
-// Free Chat
+// Free Chat (プロンプト改善済)
 // ============================================================
-async function freeChat() {
-  const msg = prompt('ペットに話しかけてみて！');
-  if (!msg) return;
-  const pet = PET_TYPES[state.petTypeIdx];
-  const petEl = document.getElementById('petEmoji');
-  petEl.classList.add('thinking'); showBubbleActions(false);
-  setBubble(`考え中${pet.suffix}... 🤔`);
-  const chatPrompt = `あなたは「${state.petName}」という名前の${pet.personality}ペットAI(${pet.emoji})です。
-性格: ${pet.traits}。語尾に「${pet.suffix}」をつけてね。
-日本語でフレンドリーに、絵文字を使って、150文字以内で答えて。
+async function freeChat(){const msg=prompt('なんでも話しかけてみて');if(!msg)return;const pet=PET_TYPES[state.petTypeIdx];const petEl=document.getElementById('petEmoji');petEl.classList.add('thinking');showBubbleActions(false);setBubble(`${pet.emoji} ...`);
+const cp=`あなたは「${state.petName}」(${pet.emoji})。${pet.personality}。
+キャラ設定: ${pet.traits}
 
-ユーザーのメッセージ: ${msg}`;
-  try {
-    const reply = await callGroq(chatPrompt);
-    setBubble(reply.replace(/\n/g, '<br>'));
-    state.mood = Math.min(100, state.mood + 3);
-    gainExp(3);
-    advanceMission('freechat');
-  } catch(e) { setBubble(`エラー${pet.suffix}…😿 ${e.message}`); }
-  finally { petEl.classList.remove('thinking'); }
-}
+【絶対ルール】
+- ${state.petName}として返事。AIアシスタントじゃない。ペットであり相棒。
+- 語尾「${pet.suffix}」を自然に使う。
+- 「お手伝いします」「ご質問ありがとう」みたいなAI臭い言い回し絶対禁止。
+- 150文字以内。短くてもキャラが出てればOK。
 
-// ============================================================
-// Share (calls Share Card)
-// ============================================================
-function shareResult() {
-  openShareCard();
-  advanceMission('share');
-}
+飼い主: ${msg}`;
+try{const r=await callGroq(cp);setBubble(r.replace(/\n/g,'<br>'));state.mood=Math.min(100,state.mood+3);gainExp(3);advanceMission('freechat');}catch(e){setBubble(`ごめん、うまく返事できなかった...もう一回言って？`);}finally{petEl.classList.remove('thinking');}}
+
+function shareResult(){openShareCard();advanceMission('share');}
 
 // ============================================================
 // History
 // ============================================================
-function toggleHistory() {
-  document.getElementById('historyPanel').classList.toggle('open');
-  document.getElementById('historyOverlay').classList.toggle('open');
-  renderHistory();
-}
-function renderHistory() {
-  const el = document.getElementById('historyList');
-  if (state.history.length === 0) { el.innerHTML = '<div class="history-empty">まだ履歴がないよ<br>📍「いまここ」を押してみて！</div>'; return; }
-  el.innerHTML = state.history.map(h => {
-    const d = new Date(h.time);
-    const dateStr = d.toLocaleDateString('ja-JP', { month:'short', day:'numeric', weekday:'short' });
-    const timeStr = d.toLocaleTimeString('ja-JP', { hour:'2-digit', minute:'2-digit' });
-    const modeLabels = { general:'🎯', food:'🍜', spot:'📍', weather:'🌤', chat:'💬' };
-    return `<div class="history-item"><div class="hi-meta">${modeLabels[h.mode]||''} ${dateStr} ${timeStr} · ${h.location}</div>${h.reply}</div>`;
-  }).join('');
-}
+function toggleHistory(){document.getElementById('historyPanel').classList.toggle('open');document.getElementById('historyOverlay').classList.toggle('open');renderHistory();}
+function renderHistory(){const el=document.getElementById('historyList');if(state.history.length===0){el.innerHTML='<div class="history-empty">まだログがないよ<br>📍 を押して冒険に出よう</div>';return;}el.innerHTML=state.history.map(h=>{const d=new Date(h.time);const ds=d.toLocaleDateString('ja-JP',{month:'short',day:'numeric',weekday:'short'});const ts=d.toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});const ml={general:'🎯',food:'🍜',spot:'📍',weather:'🌤',chat:'💬'};return`<div class="history-item"><div class="hi-meta">${ml[h.mode]||''} ${ds} ${ts} · ${h.location}</div>${h.reply}</div>`;}).join('');}
 
-// ============================================================
-// PWA
-// ============================================================
-if ('serviceWorker' in navigator) {
-  const swCode = `self.addEventListener('fetch', e => e.respondWith(fetch(e.request)));`;
-  const blob = new Blob([swCode], { type: 'application/javascript' });
-  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
-}
+if('serviceWorker' in navigator){const sw=`self.addEventListener('fetch',e=>e.respondWith(fetch(e.request)));`;navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(()=>{});}
 </script>
 </body>
 </html>
