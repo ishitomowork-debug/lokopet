@@ -694,7 +694,7 @@ async function callGroq(p){
   if(r.status===429){
     const e=await r.json();
     showUpgradeModal();
-    throw new Error('今日の無料回数(5回)を使い切ったよ。明日また遊ぼう！\nもっと遊びたい？ → プレミアムプラン');
+    throw new Error('今日の無料回数(15回)を使い切ったよ。明日また遊ぼう！\nもっと遊びたい？ → プレミアムプラン');
   }
   if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'APIエラー');}
   const d=await r.json();
@@ -875,7 +875,7 @@ if('serviceWorker' in navigator){const sw=`self.addEventListener('fetch',e=>e.re
   <div class="upgrade-modal">
     <div style="font-size:48px;margin-bottom:8px">🐾</div>
     <h2>今日の冒険回数を使い切ったよ</h2>
-    <p style="color:var(--text-sub);margin-bottom:16px">無料プランは1日5回まで。<br>プレミアムなら回数無制限で遊べるよ！</p>
+    <p style="color:var(--text-sub);margin-bottom:16px">無料プランは1日15回まで。<br>プレミアムなら回数無制限で遊べるよ！</p>
     <div class="upgrade-plan">
       <div class="upgrade-plan-name">✨ プレミアムプラン</div>
       <div class="upgrade-plan-price">月額 <strong>380円</strong></div>
