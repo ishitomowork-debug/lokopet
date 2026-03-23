@@ -137,35 +137,39 @@
       position: relative; width: 140px; height: 140px;
       display: flex; align-items: center; justify-content: center; margin: 8px 0;
     }
-    .pet-emoji {
-      font-size: 80px; animation: pet-idle 5s ease-in-out infinite;
-      cursor: pointer; user-select: none; transition: transform var(--transition);
-      position: relative; z-index: 2;
+    .pet-svg {
+      width: 148px; height: 148px;
+      animation: pet-idle 5s ease-in-out infinite;
+      cursor: pointer; user-select: none; transition: transform 0.15s ease;
+      position: relative; z-index: 2; display: block;
     }
-    .pet-emoji:active { transform: scale(0.95); }
+    .pet-svg svg { width: 100%; height: 100%; overflow: visible; }
+    .pet-svg:active { transform: scale(0.93); }
     .pet-shadow {
-      position: absolute; bottom: 8px; width: 48px; height: 6px;
-      background: radial-gradient(ellipse, rgba(0,0,0,0.06), transparent);
+      position: absolute; bottom: 8px; width: 56px; height: 7px;
+      background: radial-gradient(ellipse, rgba(0,0,0,0.08), transparent);
       border-radius: 50%; z-index: 1; animation: shadow-pulse 5s ease-in-out infinite;
     }
     @keyframes pet-idle {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-3px); }
+      50% { transform: translateY(-5px); }
     }
     @keyframes shadow-pulse {
       0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(0.94); opacity: 0.7; }
+      50% { transform: scale(0.88); opacity: 0.6; }
     }
-    .pet-emoji.thinking { animation: think-pulse 1.2s ease-in-out infinite; }
+    .pet-svg.thinking { animation: think-pulse 1s ease-in-out infinite; }
     @keyframes think-pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.03); }
-    }
-    .pet-emoji.happy { animation: happy-pop 0.4s ease 3; }
-    @keyframes happy-pop {
       0%, 100% { transform: translateY(0) scale(1); }
-      50% { transform: translateY(-6px) scale(1.04); }
+      50% { transform: translateY(-3px) scale(1.04); }
     }
+    .pet-svg.happy { animation: happy-pop 0.45s cubic-bezier(.36,.07,.19,.97) 3; }
+    @keyframes happy-pop {
+      0%, 100% { transform: translateY(0) scale(1) rotate(0deg); }
+      30% { transform: translateY(-10px) scale(1.08) rotate(-4deg); }
+      60% { transform: translateY(-4px) scale(1.04) rotate(3deg); }
+    }
+    .setup-pet-option svg { width: 48px; height: 48px; }
     .heart-particle { position: absolute; font-size: 16px; pointer-events: none; animation: heart-rise 1s ease-out forwards; z-index: 10; }
     @keyframes heart-rise { 0% { opacity: 1; transform: translateY(0) scale(0.5); } 100% { opacity: 0; transform: translateY(-60px) scale(1); } }
 
@@ -472,7 +476,8 @@
     body.dark-mode .settings-item:hover, body.time-night .settings-item:hover { background: rgba(255,255,255,0.04); }
     .settings-item:active { transform: scale(0.99); }
     .settings-item-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
-    .settings-item-icon { font-size: 16px; width: 24px; text-align: center; flex-shrink: 0; }
+    .settings-item-icon { font-size: 16px; width: 32px; height: 32px; text-align: center; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .settings-item-icon svg { width: 32px; height: 32px; }
     .settings-item-text { min-width: 0; }
     .settings-item-label { font-size: 14px; color: var(--text); font-weight: 500; }
     .settings-item-desc { font-size: 12px; color: var(--text-sub); margin-top: 1px; }
@@ -579,7 +584,7 @@
       <div class="stat"><span class="stat-label">探索</span><div class="stat-bar"><div class="stat-fill explore" id="exploreBar" style="width:0%"></div></div></div>
     </div>
     <div class="pet-area" id="petArea">
-      <span class="pet-emoji" id="petEmoji" onclick="tapPet(event)">🐱</span>
+      <div class="pet-svg" id="petEmoji" onclick="tapPet(event)"></div>
       <div class="pet-shadow"></div>
     </div>
   </div>
@@ -639,7 +644,7 @@
     <div class="settings-section-title">相棒</div>
     <div class="settings-item" onclick="changePetEmoji()">
       <div class="settings-item-left">
-        <span class="settings-item-icon" id="settingsPetIcon">🐱</span>
+        <span class="settings-item-icon" id="settingsPetIcon"></span>
         <div class="settings-item-text"><div class="settings-item-label">ペットを変更</div><div class="settings-item-desc" id="settingsPetName">現在: 関西グルメ猫</div></div>
       </div>
       <span class="settings-item-right">→</span>
@@ -743,6 +748,208 @@ const PET_TYPES = [
 ];
 
 // ============================================================
+// Pet SVG Illustrations (10 characters)
+// ============================================================
+const PET_SVGS = [
+  // 0: 関西グルメ猫 (orange cat)
+  `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="58,92 72,54 94,90" fill="#F4914A"/>
+    <polygon points="106,90 128,54 142,92" fill="#F4914A"/>
+    <polygon points="65,90 72,63 87,90" fill="#FFD0B0"/>
+    <polygon points="113,90 128,63 135,90" fill="#FFD0B0"/>
+    <circle cx="100" cy="116" r="54" fill="#F4914A"/>
+    <ellipse cx="74" cy="128" rx="13" ry="8" fill="#F97060" opacity="0.35"/>
+    <ellipse cx="126" cy="128" rx="13" ry="8" fill="#F97060" opacity="0.35"/>
+    <ellipse cx="84" cy="110" rx="10" ry="12" fill="#2E7D32"/>
+    <ellipse cx="116" cy="110" rx="10" ry="12" fill="#2E7D32"/>
+    <ellipse cx="84" cy="112" rx="5" ry="9" fill="#111"/>
+    <ellipse cx="116" cy="112" rx="5" ry="9" fill="#111"/>
+    <circle cx="87" cy="108" r="2.5" fill="white"/>
+    <circle cx="119" cy="108" r="2.5" fill="white"/>
+    <path d="M88,77 Q100,72 112,77" stroke="#D06030" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <line x1="100" y1="72" x2="100" y2="80" stroke="#D06030" stroke-width="1.5"/>
+    <polygon points="97,123 100,128 103,123" fill="#E05030"/>
+    <path d="M95,130 Q100,135 105,130" stroke="#E05030" stroke-width="1.5" fill="none"/>
+    <line x1="44" y1="119" x2="80" y2="123" stroke="#C07030" stroke-width="1" opacity="0.5"/>
+    <line x1="44" y1="126" x2="80" y2="126" stroke="#C07030" stroke-width="1" opacity="0.5"/>
+    <line x1="120" y1="123" x2="156" y2="119" stroke="#C07030" stroke-width="1" opacity="0.5"/>
+    <line x1="120" y1="126" x2="156" y2="126" stroke="#C07030" stroke-width="1" opacity="0.5"/>
+  </svg>`,
+  // 1: ポエム犬 (golden dog)
+  `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="68" cy="114" rx="22" ry="36" fill="#B8832A"/>
+    <ellipse cx="132" cy="114" rx="22" ry="36" fill="#B8832A"/>
+    <circle cx="100" cy="108" r="52" fill="#E8B040"/>
+    <ellipse cx="68" cy="116" rx="13" ry="26" fill="#D49040"/>
+    <ellipse cx="132" cy="116" rx="13" ry="26" fill="#D49040"/>
+    <ellipse cx="100" cy="126" rx="26" ry="18" fill="#F5CF90"/>
+    <circle cx="84" cy="101" r="11" fill="#3E2010"/>
+    <circle cx="116" cy="101" r="11" fill="#3E2010"/>
+    <circle cx="87" cy="98" r="4" fill="white"/>
+    <circle cx="119" cy="98" r="4" fill="white"/>
+    <ellipse cx="100" cy="118" rx="9" ry="7" fill="#1A0800"/>
+    <path d="M93,128 Q100,136 107,128" fill="#F06080"/>
+    <ellipse cx="100" cy="133" rx="6" ry="5" fill="#F06080"/>
+    <path d="M77,89 Q84,85 91,88" stroke="#3E2010" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M109,88 Q116,85 123,89" stroke="#3E2010" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  </svg>`,
+  // 2: 毒舌カフェうさぎ (white rabbit)
+  `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="78" cy="62" rx="16" ry="40" fill="#EDE8EE"/>
+    <ellipse cx="122" cy="62" rx="16" ry="40" fill="#EDE8EE"/>
+    <ellipse cx="78" cy="63" rx="8" ry="30" fill="#F8A8C0"/>
+    <ellipse cx="122" cy="63" rx="8" ry="30" fill="#F8A8C0"/>
+    <circle cx="100" cy="122" r="52" fill="#F5F2F6"/>
+    <ellipse cx="76" cy="130" rx="12" ry="8" fill="#F8A8C0" opacity="0.4"/>
+    <ellipse cx="124" cy="130" rx="12" ry="8" fill="#F8A8C0" opacity="0.4"/>
+    <ellipse cx="85" cy="114" rx="10" ry="10" fill="#7A5099"/>
+    <ellipse cx="115" cy="114" rx="10" ry="10" fill="#7A5099"/>
+    <circle cx="85" cy="115" r="6" fill="#1A0030"/>
+    <circle cx="115" cy="115" r="6" fill="#1A0030"/>
+    <circle cx="87" cy="112" r="2.5" fill="white"/>
+    <circle cx="117" cy="112" r="2.5" fill="white"/>
+    <line x1="77" y1="103" x2="93" y2="103" stroke="#8A7090" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="107" y1="103" x2="123" y2="103" stroke="#8A7090" stroke-width="2.5" stroke-linecap="round"/>
+    <polygon points="97,126 100,130 103,126" fill="#F8A8C0"/>
+    <line x1="94" y1="136" x2="106" y2="136" stroke="#B090A8" stroke-width="1.5" stroke-linecap="round"/>
+  </svg>`,
+  // 3: ダメ系グルメ熊 (brown bear)
+  `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="70" cy="80" r="24" fill="#7A4A28"/>
+    <circle cx="130" cy="80" r="24" fill="#7A4A28"/>
+    <circle cx="70" cy="80" r="14" fill="#A06838"/>
+    <circle cx="130" cy="80" r="14" fill="#A06838"/>
+    <circle cx="100" cy="120" r="56" fill="#8D5830"/>
+    <ellipse cx="100" cy="136" rx="28" ry="19" fill="#B07848"/>
+    <ellipse cx="84" cy="112" rx="11" ry="9" fill="#2A1406"/>
+    <ellipse cx="116" cy="112" rx="11" ry="9" fill="#2A1406"/>
+    <path d="M73,108 Q84,103 95,108" fill="#8D5830"/>
+    <path d="M105,108 Q116,103 127,108" fill="#8D5830"/>
+    <circle cx="85" cy="113" r="3" fill="white" opacity="0.6"/>
+    <circle cx="117" cy="113" r="3" fill="white" opacity="0.6"/>
+    <ellipse cx="100" cy="129" rx="9" ry="7" fill="#2A1406"/>
+    <path d="M93,138 Q100,143 107,138" stroke="#6A3818" stroke-width="1.5" fill="none"/>
+    <text x="138" y="88" font-size="13" fill="#A07848" opacity="0.55" font-family="sans-serif">z</text>
+    <text x="149" y="79" font-size="9" fill="#A07848" opacity="0.35" font-family="sans-serif">z</text>
+  </svg>`,
+  // 4: うんちく狐 (fox)
+  `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="66,92 72,46 100,90" fill="#D85C20"/>
+    <polygon points="100,90 128,46 134,92" fill="#D85C20"/>
+    <polygon points="74,90 78,58 98,90" fill="#FFCCA0"/>
+    <polygon points="102,90 122,58 126,90" fill="#FFCCA0"/>
+    <ellipse cx="100" cy="118" rx="52" ry="50" fill="#D85C20"/>
+    <ellipse cx="100" cy="132" rx="30" ry="20" fill="#F5EBD8"/>
+    <ellipse cx="72" cy="120" rx="14" ry="10" fill="#F5EBD8"/>
+    <ellipse cx="128" cy="120" rx="14" ry="10" fill="#F5EBD8"/>
+    <ellipse cx="84" cy="108" rx="10" ry="11" fill="#2A1408"/>
+    <ellipse cx="116" cy="108" rx="10" ry="11" fill="#2A1408"/>
+    <circle cx="84" cy="108" r="6" fill="#0A0400"/>
+    <circle cx="116" cy="108" r="6" fill="#0A0400"/>
+    <circle cx="86" cy="106" r="2.5" fill="white"/>
+    <circle cx="118" cy="106" r="2.5" fill="white"/>
+    <path d="M77,97 Q84,92 91,96" stroke="#5A1808" stroke-width="2" fill="none"/>
+    <path d="M109,96 Q116,92 123,97" stroke="#5A1808" stroke-width="2" fill="none"/>
+    <polygon points="97,124 100,129 103,124" fill="#3A1808"/>
+    <path d="M94,133 Q103,138 108,133" stroke="#5A1808" stroke-width="1.5" fill="none"/>
+  </svg>`,
+  // 5: アウトドア蛙 (frog)
+  `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="72" cy="84" r="22" fill="#4CAF50"/>
+    <circle cx="128" cy="84" r="22" fill="#4CAF50"/>
+    <ellipse cx="100" cy="124" rx="60" ry="50" fill="#66BB6A"/>
+    <ellipse cx="100" cy="140" rx="44" ry="26" fill="#A5D6A7"/>
+    <circle cx="72" cy="84" r="15" fill="white"/>
+    <circle cx="128" cy="84" r="15" fill="white"/>
+    <circle cx="72" cy="86" r="10" fill="#1B5E20"/>
+    <circle cx="128" cy="86" r="10" fill="#1B5E20"/>
+    <circle cx="72" cy="87" r="6" fill="#0A2410"/>
+    <circle cx="128" cy="87" r="6" fill="#0A2410"/>
+    <circle cx="74" cy="85" r="2.5" fill="white"/>
+    <circle cx="130" cy="85" r="2.5" fill="white"/>
+    <path d="M60,134 Q100,157 140,134" stroke="#2E7D32" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <ellipse cx="94" cy="120" rx="5" ry="4" fill="#2E7D32"/>
+    <ellipse cx="106" cy="120" rx="5" ry="4" fill="#2E7D32"/>
+  </svg>`,
+  // 6: サブカル系パンダ (panda)
+  `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="70" cy="74" r="24" fill="#252525"/>
+    <circle cx="130" cy="74" r="24" fill="#252525"/>
+    <circle cx="100" cy="120" r="54" fill="#F5F5F5"/>
+    <ellipse cx="82" cy="110" rx="19" ry="16" fill="#1A1A1A" transform="rotate(-10,82,110)"/>
+    <ellipse cx="118" cy="110" rx="19" ry="16" fill="#1A1A1A" transform="rotate(10,118,110)"/>
+    <circle cx="82" cy="113" r="10" fill="white"/>
+    <circle cx="118" cy="113" r="10" fill="white"/>
+    <circle cx="82" cy="115" r="7" fill="#1A1A1A"/>
+    <circle cx="118" cy="115" r="7" fill="#1A1A1A"/>
+    <path d="M72,109 Q82,106 92,109" fill="#1A1A1A"/>
+    <path d="M108,109 Q118,106 128,109" fill="#1A1A1A"/>
+    <circle cx="84" cy="115" r="2.5" fill="white"/>
+    <circle cx="120" cy="115" r="2.5" fill="white"/>
+    <ellipse cx="100" cy="128" rx="8" ry="6" fill="#252525"/>
+    <path d="M93,136 Q100,141 107,136" stroke="#555" stroke-width="1.5" fill="none"/>
+  </svg>`,
+  // 7: セラピーコアラ (koala)
+  `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="62" cy="90" r="32" fill="#90A4AE"/>
+    <circle cx="138" cy="90" r="32" fill="#90A4AE"/>
+    <circle cx="62" cy="90" r="21" fill="#B0BEC5"/>
+    <circle cx="138" cy="90" r="21" fill="#B0BEC5"/>
+    <circle cx="100" cy="120" r="52" fill="#B0BEC5"/>
+    <ellipse cx="100" cy="130" rx="17" ry="13" fill="#607D8B"/>
+    <circle cx="83" cy="110" r="11" fill="#37474F"/>
+    <circle cx="117" cy="110" r="11" fill="#37474F"/>
+    <circle cx="83" cy="110" r="7" fill="#1A2A30"/>
+    <circle cx="117" cy="110" r="7" fill="#1A2A30"/>
+    <circle cx="85" cy="108" r="2.5" fill="white"/>
+    <circle cx="119" cy="108" r="2.5" fill="white"/>
+    <path d="M75,99 Q83,95 91,98" stroke="#546E7A" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M109,98 Q117,95 125,99" stroke="#546E7A" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M92,138 Q100,143 108,138" stroke="#546E7A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  </svg>`,
+  // 8: 食通キングライオン (lion)
+  `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="100" cy="114" r="67" fill="#C08018"/>
+    <circle cx="100" cy="116" r="55" fill="#E0A030"/>
+    <circle cx="100" cy="118" r="46" fill="#F0C060"/>
+    <circle cx="65" cy="82" r="13" fill="#E0A030"/>
+    <circle cx="135" cy="82" r="13" fill="#E0A030"/>
+    <ellipse cx="100" cy="134" rx="24" ry="16" fill="#F8D890"/>
+    <ellipse cx="85" cy="110" rx="10" ry="11" fill="#3A1A08"/>
+    <ellipse cx="115" cy="110" rx="10" ry="11" fill="#3A1A08"/>
+    <ellipse cx="85" cy="111" rx="6" ry="8" fill="#0A0400"/>
+    <ellipse cx="115" cy="111" rx="6" ry="8" fill="#0A0400"/>
+    <circle cx="87" cy="108" r="2.5" fill="white"/>
+    <circle cx="117" cy="108" r="2.5" fill="white"/>
+    <polygon points="97,126 100,131 103,126" fill="#7B3010"/>
+    <path d="M93,133 L100,138 L107,133" stroke="#7B3010" stroke-width="1.5" fill="none"/>
+    <polygon points="87,70 92,59 100,66 108,59 113,70" fill="#FFD700" stroke="#C09000" stroke-width="1"/>
+  </svg>`,
+  // 9: ストリート虎 (tiger)
+  `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="62,92 72,54 96,90" fill="#E06818"/>
+    <polygon points="104,90 128,54 138,92" fill="#E06818"/>
+    <polygon points="70,90 76,62 90,90" fill="#FFAA78"/>
+    <polygon points="110,90 124,62 130,90" fill="#FFAA78"/>
+    <circle cx="100" cy="118" r="52" fill="#E06818"/>
+    <ellipse cx="100" cy="132" rx="28" ry="20" fill="#FFF0E0"/>
+    <path d="M79,79 Q83,71 87,79" stroke="#7B2808" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M94,73 Q100,65 106,73" stroke="#7B2808" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M113,79 Q117,71 121,79" stroke="#7B2808" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <ellipse cx="84" cy="108" rx="10" ry="11" fill="#1A0800"/>
+    <ellipse cx="116" cy="108" rx="10" ry="11" fill="#1A0800"/>
+    <ellipse cx="84" cy="109" rx="6" ry="8" fill="#080300"/>
+    <ellipse cx="116" cy="109" rx="6" ry="8" fill="#080300"/>
+    <circle cx="87" cy="106" r="2.5" fill="white"/>
+    <circle cx="119" cy="106" r="2.5" fill="white"/>
+    <polygon points="97,124 100,129 103,124" fill="#7B2808"/>
+    <path d="M94,132 Q103,137 108,132" stroke="#7B2808" stroke-width="1.5" fill="none"/>
+    <path d="M52,112 Q65,110 76,115" stroke="#B04010" stroke-width="2" fill="none" opacity="0.55"/>
+    <path d="M124,115 Q135,110 148,112" stroke="#B04010" stroke-width="2" fill="none" opacity="0.55"/>
+  </svg>`,
+];
+
+// ============================================================
 // State
 // ============================================================
 let state = loadState();
@@ -804,7 +1011,7 @@ function toggleSettings(){
 }
 function updateSettingsInfo(){
   const pet=PET_TYPES[state.petTypeIdx];
-  document.getElementById('settingsPetIcon').textContent=pet.emoji;
+  document.getElementById('settingsPetIcon').innerHTML=PET_SVGS[state.petTypeIdx];
   document.getElementById('settingsPetName').textContent='現在: '+pet.personality;
   document.getElementById('settingsDeviceId').textContent=getDeviceId().slice(0,8)+'...';
   updateThemeModeUI();
@@ -903,7 +1110,7 @@ window.onload=()=>{
   setInterval(()=>{if(state.mood>20){state.mood-=1;save();updatePetStats();}},30*60*1000);
 };
 
-function renderPetSelect(){document.getElementById('petSelect').innerHTML=PET_TYPES.map((p,i)=>`<button class="setup-pet-option${i===state.petTypeIdx?' selected':''}" onclick="selectPetType(${i})">${p.emoji}</button>`).join('');}
+function renderPetSelect(){document.getElementById('petSelect').innerHTML=PET_TYPES.map((p,i)=>`<button class="setup-pet-option${i===state.petTypeIdx?' selected':''}" onclick="selectPetType(${i})" title="${p.personality}">${PET_SVGS[i]}</button>`).join('');}
 function selectPetType(i){state.petTypeIdx=i;document.querySelectorAll('.setup-pet-option').forEach((el,j)=>el.classList.toggle('selected',j===i));}
 function setupNext(step){document.querySelectorAll('.setup-step').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.setup-dot').forEach(d=>d.classList.remove('active'));if(step===2){document.getElementById('step2').classList.add('active');document.getElementById('step2Pet').textContent=PET_TYPES[state.petTypeIdx].emoji;document.getElementById('petNameInput').value=state.petName;document.getElementById('dot2').classList.add('active');}}
 function completeSetup(){state.petName=document.getElementById('petNameInput').value.trim()||PET_TYPES[state.petTypeIdx].personality;state.setupDone=true;save();showApp();}
@@ -912,7 +1119,7 @@ function showApp(){
   document.getElementById('setup').classList.add('hidden');
   const app=document.getElementById('app');app.classList.remove('hidden');app.style.display='flex';app.style.flexDirection='column';app.style.alignItems='center';app.style.width='100%';
   const pet=PET_TYPES[state.petTypeIdx];
-  document.getElementById('petEmoji').textContent=pet.emoji;
+  document.getElementById('petEmoji').innerHTML=PET_SVGS[state.petTypeIdx];
   document.getElementById('petNameDisplay').textContent=state.petName;
   updatePetStats();
   const h=new Date().getHours();
@@ -928,13 +1135,13 @@ function resetApp(){confirmReset();}
 // Pet Interaction
 // ============================================================
 function tapPet(event){const pet=PET_TYPES[state.petTypeIdx];for(let i=0;i<3;i++){const heart=document.createElement('span');heart.className='heart-particle';heart.textContent=['❤️','💕','✨','💖','⭐'][Math.floor(Math.random()*5)];heart.style.left=(60+Math.random()*40)+'px';heart.style.top=(40+Math.random()*30)+'px';heart.style.animationDelay=(i*0.15)+'s';document.getElementById('petArea').appendChild(heart);setTimeout(()=>heart.remove(),1200);}state.mood=Math.min(100,state.mood+3);save();updatePetStats();advanceMission('tap');setBubble(pet.tapMessages[Math.floor(Math.random()*pet.tapMessages.length)]);}
-function changePetEmoji(){state.petTypeIdx=(state.petTypeIdx+1)%PET_TYPES.length;const pet=PET_TYPES[state.petTypeIdx];document.getElementById('petEmoji').textContent=pet.emoji;save();setBubble(`${pet.personality}に変身！ ${pet.tapMessages[0]}`);}
+function changePetEmoji(){state.petTypeIdx=(state.petTypeIdx+1)%PET_TYPES.length;const pet=PET_TYPES[state.petTypeIdx];document.getElementById('petEmoji').innerHTML=PET_SVGS[state.petTypeIdx];document.getElementById('settingsPetIcon').innerHTML=PET_SVGS[state.petTypeIdx];save();setBubble(`${pet.personality}に変身！ ${pet.tapMessages[0]}`);}
 
 // ============================================================
 // Stats & Level
 // ============================================================
 function updatePetStats(){document.getElementById('moodBar').style.width=state.mood+'%';const e=state.level*30;document.getElementById('expBar').style.width=Math.min(100,(state.exp/e)*100)+'%';document.getElementById('exploreBar').style.width=Math.min(100,state.totalExplore*10)+'%';document.getElementById('levelBadge').textContent=`Lv.${state.level}`;}
-function gainExp(a){state.exp+=a;const e=state.level*30;if(state.exp>=e){state.exp-=e;state.level++;const pet=PET_TYPES[state.petTypeIdx];setTimeout(()=>{const el=document.getElementById('petEmoji');el.classList.add('happy');setTimeout(()=>el.classList.remove('happy'),1600);setBubble(`🎉 Lv.${state.level}になった！`);},500);}state.mood=Math.min(100,state.mood+5);state.totalExplore++;save();updatePetStats();}
+function gainExp(a){state.exp+=a;const e=state.level*30;if(state.exp>=e){state.exp-=e;state.level++;const pet=PET_TYPES[state.petTypeIdx];setTimeout(()=>{const el=document.getElementById('petEmoji');el.classList.add('happy');setTimeout(()=>el.classList.remove('happy'),1600);setBubble(`Lv.${state.level}になった！`);},500);}state.mood=Math.min(100,state.mood+5);state.totalExplore++;save();updatePetStats();}
 
 function setBubble(t){document.getElementById('bubble').innerHTML=t;}
 function showBubbleActions(s){document.getElementById('bubbleActions').classList.toggle('hidden',!s);}
@@ -1005,7 +1212,7 @@ async function reverseGeocode(lat,lon){try{const r=await fetch(`https://nominati
 // ============================================================
 // Location + Ask (プロンプト改善済)
 // ============================================================
-async function getLocationAndAsk(){if(!navigator.geolocation){setBubble('位置情報に対応してないみたい...');return;}const btn=document.getElementById('mainBtn');btn.disabled=true;const petEl=document.getElementById('petEmoji');petEl.classList.add('thinking');showBubbleActions(false);hideAffiliateLinks();const pet=PET_TYPES[state.petTypeIdx];setBubble(`${pet.emoji} ...`);
+async function getLocationAndAsk(){if(!navigator.geolocation){setBubble('位置情報に対応してないみたい...');return;}const btn=document.getElementById('mainBtn');btn.disabled=true;const petEl=document.getElementById('petEmoji');petEl.classList.add('thinking');showBubbleActions(false);hideAffiliateLinks();const pet=PET_TYPES[state.petTypeIdx];setBubble(`考えてる...`);
 navigator.geolocation.getCurrentPosition(async(pos)=>{userLocation={lat:pos.coords.latitude,lon:pos.coords.longitude};userLocation.geo=await reverseGeocode(userLocation.lat,userLocation.lon);await fetchWeather(userLocation.lat,userLocation.lon);document.getElementById('locationBadge').textContent=`📍 ${userLocation.geo.display}`;document.getElementById('locationBadge').classList.add('visible');await askWithLocation();btn.disabled=false;petEl.classList.remove('thinking');advanceMission('explore');},(err)=>{btn.disabled=false;petEl.classList.remove('thinking');setBubble(`位置情報を許可してくれないと動けないよ...`);},{enableHighAccuracy:true,timeout:15000});}
 
 async function askWithLocation(){
@@ -1020,7 +1227,7 @@ async function askWithLocation(){
     chat:'今いるこの場所の半径1〜2km以内にまつわる「へぇ〜」ってなるトリビア教えて。この町・この通り・この区の歴史や文化やグルメの話。市全体の話じゃなく、ピンポイントでこの界隈の話にして。',
   };
   const geo=userLocation.geo,lm=geo.landmark?`\n- 近く: ${geo.landmark}`:'',wi=currentWeather?`\n- 天気: ${currentWeather.icon} ${currentWeather.temp}°C`:'';
-  const prompt=`あなたは「${state.petName}」(${pet.emoji})。${pet.personality}。
+  const prompt=`あなたは「${state.petName}」。${pet.personality}。
 キャラ設定: ${pet.traits}
 
 【絶対ルール】
@@ -1037,7 +1244,7 @@ async function askWithLocation(){
 - ${dateStr} ${timeStr}
 
 ${modePrompts[currentMode]}`;
-  setBubble(`${pet.emoji} ...`);hideAffiliateLinks();
+  setBubble(`考えてる...`);hideAffiliateLinks();
   try{const reply=await callGroq(prompt);lastReply=reply;setBubble(reply.replace(/\n/g,'<br>'));showBubbleActions(true);showAffiliateLinks(currentMode,userLocation?.geo,currentWeather);gainExp(10);state.history.unshift({time:now.toISOString(),location:geo.short||geo.display,mode:currentMode,reply:reply.substring(0,120)});if(state.history.length>30)state.history.pop();save();}
   catch(e){setBubble(`あれ、うまくいかなかった...ごめん<br><small>${e.message}</small>`);showBubbleActions(false);}
 }
@@ -1045,8 +1252,8 @@ ${modePrompts[currentMode]}`;
 // ============================================================
 // Free Chat (プロンプト改善済)
 // ============================================================
-async function freeChat(){const msg=prompt('なんでも話しかけてみて');if(!msg)return;const pet=PET_TYPES[state.petTypeIdx];const petEl=document.getElementById('petEmoji');petEl.classList.add('thinking');showBubbleActions(false);setBubble(`${pet.emoji} ...`);
-const cp=`あなたは「${state.petName}」(${pet.emoji})。${pet.personality}。
+async function freeChat(){const msg=prompt('なんでも話しかけてみて');if(!msg)return;const pet=PET_TYPES[state.petTypeIdx];const petEl=document.getElementById('petEmoji');petEl.classList.add('thinking');showBubbleActions(false);setBubble(`考えてる...`);
+const cp=`あなたは「${state.petName}」。${pet.personality}。
 キャラ設定: ${pet.traits}
 
 【絶対ルール】
