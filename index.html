@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>ロケペット</title>
   <meta name="description" content="どこにいても退屈しない。位置情報AIペットと一緒に街を冒険しよう。" />
-  <meta name="theme-color" content="#fafafa" />
+  <meta name="theme-color" content="#F6F4F1" />
   <link rel="manifest" href="manifest.json" />
   <meta property="og:title" content="ロケペット" />
   <meta property="og:description" content="どこにいても退屈しない。AIペットと街を冒険しよう。" />
@@ -15,21 +15,21 @@
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;600&display=swap');
 
     :root {
-      --accent: #2563eb;
-      --accent-hover: #1d4ed8;
-      --accent-subtle: rgba(37,99,235,0.06);
-      --bg: #fafafa;
-      --bg-warm: #fafafa;
-      --card: #ffffff;
-      --card-solid: #ffffff;
-      --border: rgba(0,0,0,0.06);
-      --border-mid: rgba(0,0,0,0.12);
-      --text: #1a1a1a;
-      --text-sub: #6b6b6b;
+      --accent: #E8472A;
+      --accent-hover: #CC3A20;
+      --accent-subtle: rgba(232,71,42,0.07);
+      --bg: #F6F4F1;
+      --bg-warm: #F6F4F1;
+      --card: #FFFFFF;
+      --card-solid: #FFFFFF;
+      --border: rgba(0,0,0,0.07);
+      --border-mid: rgba(0,0,0,0.13);
+      --text: #18181B;
+      --text-sub: #71717A;
       --radius: 12px;
       --radius-sm: 8px;
-      --shadow: 0 1px 3px rgba(0,0,0,0.04);
-      --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+      --shadow: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.07);
       --transition: 0.15s ease;
     }
 
@@ -51,40 +51,42 @@
 
     /* ===== Time Themes (subtle) ===== */
     body.time-morning {
-      --bg: #fafafa; --bg-warm: #fafafa;
-      --card: #ffffff; --card-solid: #ffffff;
-      --text: #1a1a1a; --text-sub: #6b6b6b;
-      --accent: #2563eb; --accent-hover: #1d4ed8; --accent-subtle: rgba(37,99,235,0.06);
+      --bg: #F6F4F1; --bg-warm: #F6F4F1;
+      --card: #FFFFFF; --card-solid: #FFFFFF;
+      --text: #18181B; --text-sub: #71717A;
+      --accent: #E8472A; --accent-hover: #CC3A20; --accent-subtle: rgba(232,71,42,0.07);
     }
     body.time-afternoon {
-      --bg: #fafafa; --bg-warm: #fafafa;
-      --card: #ffffff; --card-solid: #ffffff;
-      --text: #1a1a1a; --text-sub: #6b6b6b;
-      --accent: #2563eb; --accent-hover: #1d4ed8; --accent-subtle: rgba(37,99,235,0.06);
+      --bg: #F6F4F1; --bg-warm: #F6F4F1;
+      --card: #FFFFFF; --card-solid: #FFFFFF;
+      --text: #18181B; --text-sub: #71717A;
+      --accent: #E8472A; --accent-hover: #CC3A20; --accent-subtle: rgba(232,71,42,0.07);
     }
     body.time-evening {
-      --bg: #faf8f5; --bg-warm: #faf8f5;
-      --card: #ffffff; --card-solid: #ffffff;
-      --text: #1a1a1a; --text-sub: #6b6b6b;
-      --accent: #2563eb; --accent-hover: #1d4ed8; --accent-subtle: rgba(37,99,235,0.06);
+      --bg: #F5F1EB; --bg-warm: #F5F1EB;
+      --card: #FFFFFF; --card-solid: #FFFFFF;
+      --text: #18181B; --text-sub: #71717A;
+      --accent: #E8472A; --accent-hover: #CC3A20; --accent-subtle: rgba(232,71,42,0.07);
     }
     body.time-night {
-      --bg: #f5f5f4; --bg-warm: #f5f5f4;
-      --card: #ffffff; --card-solid: #ffffff;
-      --text: #1a1a1a; --text-sub: #6b6b6b;
-      --accent: #2563eb; --accent-hover: #1d4ed8; --accent-subtle: rgba(37,99,235,0.06);
+      --bg: #0C0C0C; --bg-warm: #0C0C0C;
+      --card: #171717; --card-solid: #171717;
+      --border: rgba(255,255,255,0.09); --border-mid: rgba(255,255,255,0.15);
+      --text: #FAFAF9; --text-sub: #A1A1AA;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3); --shadow-sm: 0 2px 8px rgba(0,0,0,0.4);
+      --accent: #FF5533; --accent-hover: #E8472A; --accent-subtle: rgba(255,85,51,0.1);
     }
     body.dark-mode {
-      --bg: #111111; --bg-warm: #111111;
-      --card: #1a1a1a; --card-solid: #1a1a1a;
-      --border: rgba(255,255,255,0.08); --border-mid: rgba(255,255,255,0.14);
-      --text: #e5e5e5; --text-sub: #888888;
-      --shadow: 0 1px 3px rgba(0,0,0,0.2); --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
-      --accent: #2563eb; --accent-hover: #3b82f6; --accent-subtle: rgba(37,99,235,0.12);
+      --bg: #0C0C0C; --bg-warm: #0C0C0C;
+      --card: #171717; --card-solid: #171717;
+      --border: rgba(255,255,255,0.09); --border-mid: rgba(255,255,255,0.15);
+      --text: #FAFAF9; --text-sub: #A1A1AA;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3); --shadow-sm: 0 2px 8px rgba(0,0,0,0.4);
+      --accent: #FF5533; --accent-hover: #E8472A; --accent-subtle: rgba(255,85,51,0.1);
     }
 
     /* Legacy variable bridges for JS that uses old var names */
-    body { --primary: var(--accent); --primary-light: var(--accent-hover); --bg-start: var(--bg); --bg-end: var(--bg-warm); --line-color: transparent; --shadow-lg: var(--shadow-sm); }
+    body { --primary: var(--accent); --primary-light: var(--accent-hover); --bg-start: var(--bg); --bg-end: var(--bg-warm); --line-color: transparent; --shadow-lg: var(--shadow-sm); --accent-color: var(--accent); }
 
     /* ===== Header ===== */
     .header {
@@ -93,17 +95,19 @@
       max-width: 420px;
     }
     .header h1 {
-      font-size: 16px; color: var(--text); font-weight: 600;
-      letter-spacing: -0.02em; line-height: 1.3;
+      font-size: 15px; color: var(--text); font-weight: 600;
+      letter-spacing: -0.03em; line-height: 1.3;
     }
     .header-icons { display: flex; gap: 2px; }
     .icon-btn {
-      width: 32px; height: 32px; border-radius: var(--radius-sm);
+      width: 34px; height: 34px; border-radius: var(--radius-sm);
       border: none;
       background: transparent; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       font-size: 14px; transition: background var(--transition);
+      color: var(--text-sub);
     }
+    .icon-btn svg { stroke: var(--text-sub); }
     .icon-btn:hover { background: rgba(0,0,0,0.04); }
     body.dark-mode .icon-btn:hover, body.time-night .icon-btn:hover { background: rgba(255,255,255,0.06); }
     .icon-btn:active { transform: scale(0.98); }
@@ -114,8 +118,12 @@
       display: flex; flex-direction: column; align-items: center;
     }
     .pet-stats {
-      display: flex; gap: 12px; width: 100%; margin-bottom: 12px;
+      display: flex; gap: 0; width: 100%; margin-bottom: 12px;
       justify-content: center; align-items: center;
+    }
+    /* stat-inline: テキスト1行表示用 */
+    .stat-inline {
+      font-size: 12px; color: var(--text-sub); text-align: center; line-height: 1.5;
     }
     .stat {
       display: flex; align-items: center; gap: 6px;
@@ -123,8 +131,8 @@
     }
     .stat span { font-size: 12px; }
     .stat-label { font-size: 10px; color: var(--text-sub); font-weight: 500; white-space: nowrap; }
-    .stat-bar { width: 48px; height: 2px; background: var(--border); border-radius: 1px; overflow: hidden; }
-    .stat-fill { height: 100%; border-radius: 1px; transition: width 0.15s ease; }
+    .stat-bar { display: none; }
+    .stat-fill { display: none; }
     .stat-fill.mood { background: var(--accent); }
     .stat-fill.exp { background: var(--text); }
     .stat-fill.explore { background: #10b981; }
@@ -134,14 +142,15 @@
     }
 
     .pet-area {
-      position: relative; width: 140px; height: 140px;
+      position: relative; width: 160px; height: 160px;
       display: flex; align-items: center; justify-content: center; margin: 8px 0;
     }
     .pet-svg {
-      width: 148px; height: 148px;
-      animation: pet-idle 5s ease-in-out infinite;
+      width: 160px; height: 160px;
+      animation: pet-idle 6s ease-in-out infinite;
       cursor: pointer; user-select: none; transition: transform 0.15s ease;
       position: relative; z-index: 2; display: block;
+      filter: drop-shadow(0 8px 32px rgba(0,0,0,0.08));
     }
     .pet-svg svg { width: 100%; height: 100%; overflow: visible; }
     .pet-svg:active { transform: scale(0.93); }
@@ -152,7 +161,7 @@
     }
     @keyframes pet-idle {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-5px); }
+      50% { transform: translateY(-4px); }
     }
     @keyframes shadow-pulse {
       0%, 100% { transform: scale(1); opacity: 1; }
@@ -174,12 +183,28 @@
     @keyframes heart-rise { 0% { opacity: 1; transform: translateY(0) scale(0.5); } 100% { opacity: 0; transform: translateY(-60px) scale(1); } }
 
     /* ===== Bubble ===== */
-    .bubble-wrap { width: 100%; max-width: 420px; padding: 0 16px; }
+    .bubble-wrap { width: 100%; max-width: 420px; padding: 0 16px; position: relative; }
     .bubble {
       background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 16px;
-      width: 100%; font-size: 14px; line-height: 1.6; color: var(--text);
+      border-radius: 16px; padding: 18px 20px;
+      width: 100%; font-size: 15px; line-height: 1.65; color: var(--text);
       min-height: 48px; position: relative;
+    }
+    .bubble::before {
+      content: '';
+      position: absolute;
+      top: -8px; left: 50%; transform: translateX(-50%);
+      border: 8px solid transparent;
+      border-bottom-color: var(--border);
+      pointer-events: none;
+    }
+    .bubble::after {
+      content: '';
+      position: absolute;
+      top: -7px; left: 50%; transform: translateX(-50%);
+      border: 8px solid transparent;
+      border-bottom-color: var(--card);
+      pointer-events: none;
     }
     .bubble-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
     .bubble-actions.hidden { display: none; }
@@ -194,29 +219,35 @@
 
     /* ===== Controls ===== */
     .controls { width: 100%; max-width: 420px; padding: 24px 16px 12px; }
-    .chips { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 16px; }
+    .chips {
+      display: flex; gap: 6px; flex-wrap: nowrap;
+      overflow-x: auto; margin-bottom: 16px;
+      -ms-overflow-style: none; scrollbar-width: none;
+    }
+    .chips::-webkit-scrollbar { display: none; }
     .chip {
-      padding: 6px 14px; border-radius: var(--radius-sm); font-size: 13px; cursor: pointer;
+      padding: 7px 16px; border-radius: 99px; font-size: 13px; cursor: pointer;
       border: 1px solid var(--border-mid); background: transparent;
       transition: all var(--transition); font-family: inherit; color: var(--text-sub);
-      font-weight: 500;
+      font-weight: 500; white-space: nowrap; flex-shrink: 0;
     }
     .chip.active { background: var(--accent); color: white; border-color: transparent; }
     .chip:hover:not(.active) { border-color: var(--text-sub); color: var(--text); }
     .main-btn {
-      width: 100%; padding: 14px; border: none; border-radius: var(--radius-sm);
-      font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit;
+      width: 100%; height: 54px; padding: 16px; border: none; border-radius: 10px;
+      font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit;
       background: var(--accent); color: white;
       transition: all var(--transition);
       display: flex; align-items: center; justify-content: center; gap: 8px;
       letter-spacing: -0.01em;
+      box-shadow: 0 2px 8px rgba(232,71,42,0.25);
     }
-    .main-btn:hover { background: var(--accent-hover); }
-    .main-btn:active { transform: scale(0.98); }
+    .main-btn:hover { background: var(--accent-hover); box-shadow: 0 4px 16px rgba(232,71,42,0.3); }
+    .main-btn:active { transform: scale(0.97); }
     .main-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
     .sub-btns { display: flex; gap: 8px; margin-top: 12px; }
     .sub-btn {
-      flex: 1; padding: 12px; border: 1px solid var(--border-mid); border-radius: var(--radius-sm);
+      flex: 1; padding: 13px; border: 1px solid var(--border-mid); border-radius: 10px;
       font-size: 13px; cursor: pointer; background: transparent; font-family: inherit;
       transition: all var(--transition); text-align: center; color: var(--text); position: relative;
       font-weight: 500;
@@ -250,7 +281,7 @@
       transition: all 0.2s ease;
     }
     .mission-panel.compact { padding: 12px 16px; }
-    .mission-panel h3 { margin: 0 0 12px; font-size: 14px; display: flex; align-items: center; gap: 6px; color: var(--text); font-weight: 600; }
+    .mission-panel h3 { margin: 0 0 12px; font-size: 14px; display: flex; align-items: center; gap: 6px; color: var(--text); font-weight: 600; width: 100%; }
     .mission-panel h3 .mission-reset-hint { font-size: 13px; font-weight: 400; color: var(--text-sub); margin-left: auto; }
     .mission-panel.compact h3 { margin: 0; }
     .mission-compact-row { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
@@ -268,6 +299,7 @@
     .mission-item.completed .mission-reward { background: rgba(16,185,129,0.08); color: #10b981; text-decoration: line-through; }
     .mission-item.completed .mission-label { color: var(--text-sub); text-decoration: line-through; }
     .mission-complete-all { margin-top: 12px; padding: 10px; text-align: center; font-size: 13px; color: #10b981; font-weight: 600; display: none; }
+    .mission-panel:not(.compact) .mission-complete-all { display: block; }
     .mission-complete-all.show { display: block; }
 
     /* ===== Stats panel ===== */
@@ -375,10 +407,10 @@
     .setup-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border-mid); transition: background var(--transition); }
     .setup-dot.active { background: var(--accent); }
     .hidden { display: none !important; }
-    .footer { width: 100%; max-width: 420px; text-align: center; padding: 20px 16px; font-size: 13px; color: var(--text-sub); }
+    .footer { width: 100%; max-width: 420px; text-align: center; padding: 16px 16px 32px; font-size: 12px; color: var(--text-sub); }
     .footer a { color: var(--text-sub); text-decoration: underline; text-underline-offset: 2px; }
 
-    ::selection { background: rgba(37,99,235,0.15); }
+    ::selection { background: rgba(232,71,42,0.15); }
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 2px; }
 
@@ -404,7 +436,7 @@
     }
     .upgrade-modal h2 { font-size: 16px; margin-bottom: 8px; color: var(--text); font-weight: 600; letter-spacing: -0.02em; }
     .upgrade-plan {
-      background: var(--accent-subtle); border: 1px solid rgba(37,99,235,0.2);
+      background: var(--accent-subtle); border: 1px solid rgba(232,71,42,0.2);
       border-radius: var(--radius); padding: 20px 16px; margin-bottom: 16px;
     }
     .upgrade-plan-name { font-weight: 600; color: var(--accent); font-size: 14px; margin-bottom: 4px; }
@@ -432,7 +464,7 @@
     }
     .affiliate-link {
       display: inline-flex; align-items: center; gap: 4px;
-      font-size: 13px; padding: 6px 12px; border-radius: var(--radius-sm);
+      font-size: 12px; padding: 5px 12px; border-radius: 99px;
       background: transparent; border: 1px solid var(--border-mid);
       color: var(--text); text-decoration: none; font-family: inherit;
       transition: all var(--transition); cursor: pointer;
@@ -443,15 +475,8 @@
 
     /* 応援ボタン */
     .support-float-btn {
-      position: fixed; bottom: 24px; right: 24px; z-index: 100;
-      background: transparent; color: var(--text-sub); border: none;
-      padding: 8px 12px; border-radius: var(--radius-sm); font-family: inherit;
-      font-size: 13px; font-weight: 500; cursor: pointer;
-      transition: all var(--transition);
-      text-decoration: underline; text-underline-offset: 2px;
+      display: none;
     }
-    .support-float-btn:hover { color: var(--text); }
-    .support-float-btn:active { transform: scale(0.98); }
 
     /* ===== Settings Panel ===== */
     .settings-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background: rgba(0,0,0,0.2); z-index: 99; display: none; backdrop-filter: blur(2px); }
@@ -579,10 +604,13 @@
   </div>
   <div class="pet-stage">
     <div class="pet-stats">
-      <div class="stat"><span class="stat-label">気分</span><div class="stat-bar"><div class="stat-fill mood" id="moodBar" style="width:80%"></div></div></div>
-      <div class="pet-level" id="levelBadge">Lv.1</div>
-      <div class="stat"><span class="stat-label">EXP</span><div class="stat-bar"><div class="stat-fill exp" id="expBar" style="width:0%"></div></div></div>
-      <div class="stat"><span class="stat-label">探索</span><div class="stat-bar"><div class="stat-fill explore" id="exploreBar" style="width:0%"></div></div></div>
+      <div class="stat-inline" id="statInline">
+        <span id="moodLabel">気分</span> ・ <span id="levelBadge">Lv.1</span> ・ EXP <span id="expLabel">0%</span>
+      </div>
+      <!-- hidden bars kept for JS compatibility -->
+      <div style="display:none"><div class="stat-bar"><div class="stat-fill mood" id="moodBar" style="width:80%"></div></div></div>
+      <div style="display:none"><div class="stat-bar"><div class="stat-fill exp" id="expBar" style="width:0%"></div></div></div>
+      <div style="display:none"><div class="stat-bar"><div class="stat-fill explore" id="exploreBar" style="width:0%"></div></div></div>
     </div>
     <div class="pet-area" id="petArea">
       <div class="pet-svg" id="petEmoji" onclick="tapPet(event)"></div>
@@ -614,12 +642,12 @@
     <div class="weather-badge" id="weatherBadge"><span id="weatherIcon">☀️</span><span class="weather-temp" id="weatherTemp">--°C</span></div>
     <div class="remaining-badge" id="remainingBadge"></div>
   </div>
-  <div class="mission-panel" id="missionPanel" style="display:none">
-    <h3>今日のやること <span class="mission-reset-hint">毎日0時リセット</span></h3>
-    <div id="missionList"></div>
-    <div class="mission-complete-all" id="missionCompleteAll">全クリア！ボーナス EXP+10</div>
+  <div class="mission-panel compact" id="missionPanel" style="display:none">
+    <h3 onclick="toggleMissionPanel()" style="cursor:pointer;user-select:none">今日のやること <span class="mission-reset-hint">毎日0時リセット</span><span id="missionChevron" style="margin-left:auto;font-size:14px;color:var(--text-sub)">›</span></h3>
+    <div id="missionList" style="display:none"></div>
+    <div class="mission-complete-all" id="missionCompleteAll" style="display:none">全クリア！ボーナス EXP+10</div>
   </div>
-  <div class="footer">ロケペット</div>
+  <div class="footer"><a href="https://ofuse.me/6591717e" target="_blank">☕ 応援する</a></div>
 </div>
 
 <div class="stats-overlay" id="statsOverlay" onclick="toggleStats()"></div>
@@ -1053,7 +1081,7 @@ async function fetchWeather(lat,lon){try{const r=await fetch(`https://api.open-m
 // ============================================================
 const DAILY_MISSIONS=[{id:'explore',icon:'',label:'冒険に出る',goal:3,reward:20},{id:'tap',icon:'',label:'なでる',goal:5,reward:10},{id:'freechat',icon:'',label:'話しかける',goal:1,reward:5},{id:'share',icon:'',label:'シェアする',goal:1,reward:15}];
 function getTodayStr(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
-function initMissions(){const t=getTodayStr();if(state.lastMissionDate!==t){state.lastMissionDate=t;state.missions={};DAILY_MISSIONS.forEach(m=>{state.missions[m.id]={progress:0,claimed:false};});state.missionAllClaimed=false;save();}if(!state.missions||Object.keys(state.missions).length===0){state.missions={};DAILY_MISSIONS.forEach(m=>{state.missions[m.id]={progress:0,claimed:false};});save();}document.getElementById('missionPanel').style.display='';renderMissions();}
+function initMissions(){const t=getTodayStr();if(state.lastMissionDate!==t){state.lastMissionDate=t;state.missions={};DAILY_MISSIONS.forEach(m=>{state.missions[m.id]={progress:0,claimed:false};});state.missionAllClaimed=false;save();}if(!state.missions||Object.keys(state.missions).length===0){state.missions={};DAILY_MISSIONS.forEach(m=>{state.missions[m.id]={progress:0,claimed:false};});save();}const mp=document.getElementById('missionPanel');mp.style.display='';mp.classList.add('compact');document.getElementById('missionList').style.display='none';document.getElementById('missionCompleteAll').style.display='none';renderMissions();}
 function advanceMission(id){const t=getTodayStr();if(state.lastMissionDate!==t)initMissions();const def=DAILY_MISSIONS.find(m=>m.id===id);if(!def)return;const ms=state.missions[id];if(!ms||ms.claimed)return;ms.progress=Math.min(ms.progress+1,def.goal);if(ms.progress>=def.goal&&!ms.claimed){ms.claimed=true;gainExp(def.reward);showMissionToast(def);}save();renderMissions();checkAllMissions();}
 function checkAllMissions(){if(state.missionAllClaimed)return;if(DAILY_MISSIONS.every(m=>state.missions[m.id]?.claimed)){state.missionAllClaimed=true;gainExp(10);save();document.getElementById('missionCompleteAll').classList.add('show');}}
 function showMissionToast(def){const t=document.createElement('div');t.textContent=`${def.icon} 達成！ EXP+${def.reward}`;Object.assign(t.style,{position:'fixed',top:'18px',left:'50%',transform:'translateX(-50%)',background:'var(--text)',color:'var(--bg-start)',padding:'12px 24px',borderRadius:'12px',fontSize:'0.88em',zIndex:'9999',opacity:'0',transition:'opacity 0.3s ease',fontFamily:'Noto Sans JP, sans-serif',fontWeight:'600'});document.body.appendChild(t);requestAnimationFrame(()=>{t.style.opacity='1';});setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),400);},2200);}
@@ -1062,13 +1090,11 @@ function renderMissions(){
   const panel=document.getElementById('missionPanel');
   const allDone=document.getElementById('missionCompleteAll');
   if(!l)return;
+  const isCompact=panel.classList.contains('compact');
   if(state.missionAllClaimed){
-    // 全クリア済み → コンパクト表示
-    panel.classList.add('compact');
     l.innerHTML=`<div class="mission-compact-row"><span class="mission-compact-dot"></span><span class="mission-compact-text">今日のミッション全クリア！ EXP+${DAILY_MISSIONS.reduce((s,m)=>s+m.reward,0)+10} 獲得済み</span></div>`;
-    allDone.classList.remove('show');
+    if(!isCompact){allDone.classList.remove('show');}
   } else {
-    panel.classList.remove('compact');
     l.innerHTML=DAILY_MISSIONS.map(def=>{
       const ms=state.missions?.[def.id]||{progress:0,claimed:false};
       const pct=Math.min(ms.progress/def.goal*100,100);
@@ -1141,7 +1167,21 @@ function changePetEmoji(){state.petTypeIdx=(state.petTypeIdx+1)%PET_TYPES.length
 // ============================================================
 // Stats & Level
 // ============================================================
-function updatePetStats(){document.getElementById('moodBar').style.width=state.mood+'%';const e=state.level*30;document.getElementById('expBar').style.width=Math.min(100,(state.exp/e)*100)+'%';document.getElementById('exploreBar').style.width=Math.min(100,state.totalExplore*10)+'%';document.getElementById('levelBadge').textContent=`Lv.${state.level}`;}
+function updatePetStats(){
+  document.getElementById('moodBar').style.width=state.mood+'%';
+  const e=state.level*30;
+  const expPct=Math.min(100,Math.round((state.exp/e)*100));
+  document.getElementById('expBar').style.width=expPct+'%';
+  document.getElementById('exploreBar').style.width=Math.min(100,state.totalExplore*10)+'%';
+  document.getElementById('levelBadge').textContent=`Lv.${state.level}`;
+  // stat-inline テキスト更新
+  const moodLabels=['😴','😟','😐','😊','😄','🤩'];
+  const moodIdx=Math.min(Math.floor(state.mood/20),5);
+  const moodEl=document.getElementById('moodLabel');
+  if(moodEl)moodEl.textContent='気分 '+moodLabels[moodIdx];
+  const expEl=document.getElementById('expLabel');
+  if(expEl)expEl.textContent=expPct+'%';
+}
 function gainExp(a){state.exp+=a;const e=state.level*30;if(state.exp>=e){state.exp-=e;state.level++;const pet=PET_TYPES[state.petTypeIdx];setTimeout(()=>{const el=document.getElementById('petEmoji');el.classList.add('happy');setTimeout(()=>el.classList.remove('happy'),1600);setBubble(`Lv.${state.level}になった！`);},500);}state.mood=Math.min(100,state.mood+5);state.totalExplore++;save();updatePetStats();}
 
 function setBubble(t){document.getElementById('bubble').innerHTML=t;}
@@ -1347,7 +1387,7 @@ function showAffiliateLinks(mode,geo,weather){
   }
 
   if(links.length===0){el.classList.add('hidden');return;}
-  el.innerHTML=`<div class="affiliate-links-label">周辺をもっと探す</div><div class="affiliate-link-row">${links.map(l=>`<a class="affiliate-link" href="${l.url}" target="_blank" rel="noopener">${l.label}<span class="aff-source">${l.source}</span></a>`).join('')}</div>`;
+  el.innerHTML=`<div class="affiliate-links-label">この近くで探す</div><div class="affiliate-link-row">${links.map(l=>`<a class="affiliate-link" href="${l.url}" target="_blank" rel="noopener">${l.label}<span class="aff-source">${l.source}</span></a>`).join('')}</div>`;
   el.classList.remove('hidden');
 }
 
@@ -1358,6 +1398,28 @@ function hideAffiliateLinks(){document.getElementById('affiliateLinks').classLis
 // ============================================================
 function toggleHistory(){document.getElementById('historyPanel').classList.toggle('open');document.getElementById('historyOverlay').classList.toggle('open');renderHistory();}
 function renderHistory(){const el=document.getElementById('historyList');if(state.history.length===0){el.innerHTML='<div class="history-empty">まだログがないよ<br>冒険に出よう</div>';return;}el.innerHTML=state.history.map(h=>{const d=new Date(h.time);const ds=d.toLocaleDateString('ja-JP',{month:'short',day:'numeric',weekday:'short'});const ts=d.toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});const ml={general:'🎯',food:'🍜',spot:'📍',weather:'🌤',chat:'💬'};return`<div class="history-item"><div class="hi-meta">${ml[h.mode]||''} ${ds} ${ts} · ${h.location}</div>${h.reply}</div>`;}).join('');}
+
+// ============================================================
+// Mission Panel Toggle
+// ============================================================
+function toggleMissionPanel(){
+  const panel=document.getElementById('missionPanel');
+  const list=document.getElementById('missionList');
+  const completeAll=document.getElementById('missionCompleteAll');
+  const chevron=document.getElementById('missionChevron');
+  const isCompact=panel.classList.contains('compact');
+  if(isCompact){
+    panel.classList.remove('compact');
+    list.style.display='';
+    completeAll.style.display='';
+    if(chevron)chevron.textContent='‹';
+  }else{
+    panel.classList.add('compact');
+    list.style.display='none';
+    completeAll.style.display='none';
+    if(chevron)chevron.textContent='›';
+  }
+}
 
 if('serviceWorker' in navigator){const sw=`self.addEventListener('fetch',e=>e.respondWith(fetch(e.request)));`;navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(()=>{});}
 </script>
