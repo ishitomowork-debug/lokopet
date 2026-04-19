@@ -1327,38 +1327,52 @@ function rakutenUrl(service,searchQuery){
   };
   return urls[service]||urls.ichiba;
 }
-function hotpepperUrl(area,keyword){
-  const q=encodeURIComponent(`${area} ${keyword||''}`.trim());
+// 日本語文字（ひらがな・カタカナ・漢字）を含むか判定
+function hasJapanese(str){return /[\u3040-\u9fff\uff00-\uffef]/.test(str);}
+
+// city+suburb を組み合わせた検索クエリを構築（suburb が英語なら無視）
+function buildAreaQuery(area,suburb){
+  const sub=suburb&&hasJapanese(suburb)?suburb:'';
+  if(area&&sub)return `${area} ${sub}`;
+  return sub||area;
+}
+
+function hotpepperUrl(area,suburb,keyword){
+  const location=buildAreaQuery(area,suburb);
+  const q=encodeURIComponent(`${location} ${keyword||''}`.trim());
   const dest=`https://www.hotpepper.jp/search/?keyword=${q}`;
   return HOTPEPPER_A8_PREFIX ? HOTPEPPER_A8_PREFIX+encodeURIComponent(dest) : dest;
 }
-function gurunaviUrl(area,keyword){
-  const q=encodeURIComponent(`${area} ${keyword||''}`.trim());
+function gurunaviUrl(area,suburb,keyword){
+  const location=buildAreaQuery(area,suburb);
+  const q=encodeURIComponent(`${location} ${keyword||''}`.trim());
   const dest=`https://r.gnavi.co.jp/search/?freeword=${q}`;
   return GNAVI_AFF_PREFIX ? GNAVI_AFF_PREFIX+encodeURIComponent(dest) : dest;
 }
-function tabelogUrl(area){
-  const q=encodeURIComponent(area);
-  return `https://tabelog.com/rstLst/?vs=1&sa=${q}&sk=`;
+function tabelogUrl(area,suburb){
+  // skパラメータ = キーワード検索（saはエリアコードなので使わない）
+  const location=buildAreaQuery(area,suburb);
+  const q=encodeURIComponent(location);
+  return `https://tabelog.com/rstLst/?vs=1&sa=&sk=${q}`;
 }
 
 function showAffiliateLinks(mode,geo,weather){
   const el=document.getElementById('affiliateLinks');
   const area=geo?.raw?.city||geo?.raw?.town||geo?.raw?.village||'';
   const suburb=geo?.raw?.suburb||geo?.raw?.neighbourhood||'';
-  const spot=suburb||area;
+  const spotLabel=hasJapanese(suburb)?suburb:area; // 表示用ラベル
   let links=[];
 
   if(mode==='food'){
     links=[
-      {label:`${spot}のお店を探す`,url:hotpepperUrl(spot,''),source:'ホットペッパー'},
-      {label:`${spot}のランチ`,url:hotpepperUrl(spot,'ランチ'),source:'ホットペッパー'},
-      {label:`${spot}周辺で探す`,url:gurunaviUrl(spot,''),source:'ぐるなび'},
-      {label:`${area}のレストラン`,url:tabelogUrl(area),source:'食べログ'},
+      {label:`${spotLabel}のお店を探す`,url:hotpepperUrl(area,suburb,''),source:'ホットペッパー'},
+      {label:`${spotLabel}のランチ`,url:hotpepperUrl(area,suburb,'ランチ'),source:'ホットペッパー'},
+      {label:`${spotLabel}周辺で探す`,url:gurunaviUrl(area,suburb,''),source:'ぐるなび'},
+      {label:`${spotLabel}のレストラン`,url:tabelogUrl(area,suburb),source:'食べログ'},
     ];
   }else if(mode==='spot'){
     links=[
-      {label:`${area}周辺のランチ`,url:hotpepperUrl(area,''),source:'ホットペッパー'},
+      {label:`${spotLabel}周辺のランチ`,url:hotpepperUrl(area,suburb,''),source:'ホットペッパー'},
       {label:`${area}の宿を探す`,url:rakutenUrl('travel',area),source:'楽天トラベル'},
       {label:`${area}ガイド本`,url:rakutenUrl('books',`${area} ガイド 観光`),source:'楽天ブックス'},
     ];
@@ -1370,19 +1384,19 @@ function showAffiliateLinks(mode,geo,weather){
       isRain?{label:'雨の日グッズ',url:rakutenUrl('ichiba','折りたたみ傘 レインコート'),source:'楽天'}:null,
       isHot?{label:'暑さ対策グッズ',url:rakutenUrl('ichiba','冷感グッズ ハンディファン'),source:'楽天'}:null,
       isCold?{label:'防寒グッズ',url:rakutenUrl('ichiba','防寒 手袋 マフラー'),source:'楽天'}:null,
-      {label:`${area}周辺のごはん`,url:hotpepperUrl(area,''),source:'ホットペッパー'},
+      {label:`${spotLabel}周辺のごはん`,url:hotpepperUrl(area,suburb,''),source:'ホットペッパー'},
       {label:`${area}周辺の宿`,url:rakutenUrl('travel',area),source:'楽天トラベル'},
     ].filter(Boolean);
   }else if(mode==='chat'){
     links=[
-      {label:`${spot}周辺のごはん`,url:hotpepperUrl(spot,''),source:'ホットペッパー'},
+      {label:`${spotLabel}周辺のごはん`,url:hotpepperUrl(area,suburb,''),source:'ホットペッパー'},
       {label:`${area}の本`,url:rakutenUrl('books',`${area} 歴史 文化`),source:'楽天ブックス'},
     ];
   }else{
     links=[
-      {label:`${spot}周辺のごはん`,url:hotpepperUrl(spot,''),source:'ホットペッパー'},
+      {label:`${spotLabel}周辺のごはん`,url:hotpepperUrl(area,suburb,''),source:'ホットペッパー'},
       {label:`${area}周辺の宿`,url:rakutenUrl('travel',area),source:'楽天トラベル'},
-      {label:`${spot}のお土産`,url:rakutenUrl('ichiba',`${spot} 名物 お土産`),source:'楽天'},
+      {label:`${spotLabel}のお土産`,url:rakutenUrl('ichiba',`${buildAreaQuery(area,suburb)} 名物 お土産`),source:'楽天'},
     ];
   }
 
